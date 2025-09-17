@@ -1,14 +1,11 @@
 package org.firstinspires.ftc.teamcode.opmodes.Teleop;
 
-import static org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion.hardwareMap;
-
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 @TeleOp(name="Field Orientated Drive", group="TeleOp") // FIELD ORIENTATED
 
-public class MecanumFieldOrientatedDrive extends OpMode {
+public class MecanumFieldOrientedDrive extends OpMode {
 
     FieldCentricDrive fieldCentricDrive = new FieldCentricDrive();
 
