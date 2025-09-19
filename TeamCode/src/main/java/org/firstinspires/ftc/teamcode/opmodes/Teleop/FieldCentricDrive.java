@@ -83,6 +83,8 @@ public class FieldCentricDrive  {
         double newForward = r * Math.sin(theta);
         double newStrafe = r * Math.cos(theta);
 
+        newStrafe = newStrafe * 1.1; // <-- scales strafing to counter imperfect mecanum movement
+
         this.drive(newForward, newStrafe, rotate);
     }
 }
