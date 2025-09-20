@@ -7,22 +7,22 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 @TeleOp(name="Basic Mecanum Drive", group="TeleOp") //ROBOT ORIENTATED
 public class BasicMecanumDrive extends OpMode {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
+    private DcMotor leftFront;
+    private DcMotor rightFront;
+    private DcMotor leftBack;
+    private DcMotor rightBack;
 
     @Override
     public void init() {
-        frontLeft  = hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft   = hardwareMap.get(DcMotor.class, "backLeft");
-        backRight  = hardwareMap.get(DcMotor.class, "backRight");
+        leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
+        rightFront = hardwareMap.get(DcMotor.class, "rightFront");
+        leftBack   = hardwareMap.get(DcMotor.class, "leftBack");
+        rightBack  = hardwareMap.get(DcMotor.class, "rightBack");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -43,10 +43,10 @@ public class BasicMecanumDrive extends OpMode {
         max = Math.max(max, Math.abs(frontRightPower));
         max = Math.max(max, Math.abs(backRightPower));
 
-        frontLeft.setPower(frontLeftPower / max);
-        backLeft.setPower(backLeftPower / max);
-        frontRight.setPower(frontRightPower / max);
-        backRight.setPower(backRightPower / max);
+        leftFront.setPower(frontLeftPower / max);
+        leftBack.setPower(backLeftPower / max);
+        rightFront.setPower(frontRightPower / max);
+        rightBack.setPower(backRightPower / max);
 
         telemetry.addData("FL", frontLeftPower);
         telemetry.addData("FR", frontRightPower);

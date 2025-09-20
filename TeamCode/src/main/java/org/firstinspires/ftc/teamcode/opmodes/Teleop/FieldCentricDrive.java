@@ -20,10 +20,10 @@ public class FieldCentricDrive  {
     private IMU imu;
 
     public void init(HardwareMap hardwareMap) {
-        frontLeft  = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "frontLeft");
-        frontRight = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "frontRight");
-        backLeft   = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "backLeft");
-        backRight  = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "backRight");
+        frontLeft  = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "leftFront");
+        frontRight = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "rightFront");
+        backLeft   = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "leftBack");
+        backRight  = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "rightBack");
 
         frontLeft.setDirection(DcMotor.Direction.REVERSE);
         backLeft.setDirection(DcMotor.Direction.REVERSE);
