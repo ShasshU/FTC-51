@@ -12,34 +12,34 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
 public class FieldCentricDrive  {
 
-    private DcMotor frontLeft;
-    private DcMotor frontRight;
-    private DcMotor backLeft;
-    private DcMotor backRight;
+    private DcMotor leftFront;
+    private DcMotor rightFront;
+    private DcMotor leftBack;
+    private DcMotor rightBack;
 
     private IMU imu;
 
     public void init(HardwareMap hardwareMap) {
-        frontLeft  = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "leftFront");
-        frontRight = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "rightFront");
-        backLeft   = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "leftBack");
-        backRight  = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "rightBack");
+        leftFront = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "leftFront");
+        rightFront = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "rightFront");
+        leftBack = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "leftBack");
+        rightBack = BlocksOpModeCompanion.hardwareMap.get(DcMotor.class, "rightBack");
 
-        frontLeft.setDirection(DcMotor.Direction.REVERSE);
-        backLeft.setDirection(DcMotor.Direction.REVERSE);
-        frontRight.setDirection(DcMotor.Direction.FORWARD);
-        backRight.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
 
-        frontLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        frontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        backRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightFront.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        leftBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        rightBack.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = BlocksOpModeCompanion.hardwareMap.get(IMU.class,"imu");
 
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.UP,
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD); //change depending on robot
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.UsbFacingDirection.UP); //change depending on robot
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
@@ -62,10 +62,10 @@ public class FieldCentricDrive  {
         maxPower = Math.max(maxPower, Math.abs(frontRightPower));
         maxPower = Math.max(maxPower, Math.abs(backRightPower));
 
-        frontLeft.setPower( maxSpeed * (frontLeftPower / maxPower));
-        backLeft.setPower( maxSpeed * (backLeftPower / maxPower));
-        frontRight.setPower( maxSpeed * (frontRightPower / maxPower));
-        backRight.setPower( maxSpeed * (backRightPower / maxPower));
+        leftFront.setPower( maxSpeed * (frontLeftPower / maxPower));
+        leftBack.setPower( maxSpeed * (backLeftPower / maxPower));
+        rightFront.setPower( maxSpeed * (frontRightPower / maxPower));
+        rightBack.setPower( maxSpeed * (backRightPower / maxPower));
 
         telemetry.addData("FL", frontLeftPower);
         telemetry.addData("FR", frontRightPower);
