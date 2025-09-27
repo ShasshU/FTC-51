@@ -38,7 +38,7 @@ public class FieldCentricDrive  {
         imu = BlocksOpModeCompanion.hardwareMap.get(IMU.class,"imu");
 
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP); //change depending on robot
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
