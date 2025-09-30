@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.BlocksOpModeCompanion;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 
-public class FieldCentricDrive  {
+public class FieldCentricDrive {
 
     private DcMotor leftFront;
     private DcMotor rightFront;
@@ -38,7 +38,7 @@ public class FieldCentricDrive  {
         imu = BlocksOpModeCompanion.hardwareMap.get(IMU.class,"imu");
 
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
-                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT,
+                RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
                 RevHubOrientationOnRobot.UsbFacingDirection.UP); //change depending on robot
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
