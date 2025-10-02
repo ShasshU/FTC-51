@@ -13,6 +13,10 @@ public class BasicMecanumDrive extends OpMode {
     private DcMotor leftBack;
     private DcMotor rightBack;
 
+    private boolean slowMode = false; // start in normal mode
+    private boolean lastX = false;    // remembers previous X button state
+
+
     @Override
     public void init() {
         leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
@@ -27,6 +31,12 @@ public class BasicMecanumDrive extends OpMode {
 
     @Override
     public void loop() {
+
+        if (gamepad1.x && !lastX) {
+            slowMode = !slowMode;
+        }
+        lastX = gamepad1.x;
+
         double y = -gamepad1.left_stick_y; // Forward/backward
         double x = gamepad1.left_stick_x;  // Strafe left/right
         double rx = gamepad1.right_stick_x; // Rotation
@@ -45,6 +55,16 @@ public class BasicMecanumDrive extends OpMode {
         leftBack.setPower(backLeftPower / max);
         rightFront.setPower(frontRightPower / max);
         rightBack.setPower(backRightPower / max);
+
+        double scale = slowMode ? 0.4 : 1.0; // 40% power when in slow mode
+
+        leftFront.setPower((frontLeftPower / max) * scale);
+        leftBack.setPower((backLeftPower / max) * scale);
+        rightFront.setPower((frontRightPower / max) * scale);
+        rightBack.setPower((backRightPower / max) * scale);
+
+        telemetry.addData("Slow Mode", slowMode ? "ON" : "OFF");
+        telemetry.update();
 
         telemetry.addData("FL", frontLeftPower);
         telemetry.addData("FR", frontRightPower);
