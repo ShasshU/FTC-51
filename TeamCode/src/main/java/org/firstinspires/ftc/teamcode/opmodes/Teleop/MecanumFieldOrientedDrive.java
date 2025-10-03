@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class MecanumFieldOrientedDrive extends OpMode {
 
     private DcMotor intake;
-    private boolean lastA = false;    // remembers previous X button state
+    private boolean lastA = false;    // remembers previous A button state
 
     FieldCentricDrive fieldCentricDrive = new FieldCentricDrive();
 
