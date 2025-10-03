@@ -30,7 +30,7 @@ public class MecanumFieldOrientedDrive extends OpMode {
 
         fieldCentricDrive.driveFieldRelative(forward, strafe, rotate);
 
-        if(gamepad1.a && lastA) {
+        if(gamepad1.a && !lastA) {
             intake.setPower(1.0);
         }
         else {
