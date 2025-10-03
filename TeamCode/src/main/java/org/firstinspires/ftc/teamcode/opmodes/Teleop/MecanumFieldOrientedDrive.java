@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 public class MecanumFieldOrientedDrive extends OpMode {
 
     private DcMotor intake;
+    private boolean lastA = false;    // remembers previous X button state
 
     FieldCentricDrive fieldCentricDrive = new FieldCentricDrive();
 
@@ -29,9 +30,13 @@ public class MecanumFieldOrientedDrive extends OpMode {
 
         fieldCentricDrive.driveFieldRelative(forward, strafe, rotate);
 
-        if(gamepad1.a) {
+        if(gamepad1.a && lastA) {
             intake.setPower(1.0);
         }
+        else {
+            intake.setPower(0.0);
+        }
+        lastA = gamepad1.a;
 
     }
 }
