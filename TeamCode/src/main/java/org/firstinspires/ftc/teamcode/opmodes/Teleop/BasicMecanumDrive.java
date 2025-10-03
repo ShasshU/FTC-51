@@ -56,7 +56,7 @@ public class BasicMecanumDrive extends OpMode {
         rightFront.setPower(frontRightPower / max);
         rightBack.setPower(backRightPower / max);
 
-        double scale = slowMode ? 0.4 : 1.0; // 40% power when in slow mode
+        double scale = slowMode ? 0.1 : 1.0; // 10% power when in slow mode
 
         leftFront.setPower((frontLeftPower / max) * scale);
         leftBack.setPower((backLeftPower / max) * scale);
