@@ -1,30 +1,36 @@
-package org.firstinspires.ftc.teamcode.opmodes.Autonomous;
-package com.example.meepmeeptesting;
+package org.firstinspires.ftc.teamcode.opmodes.autonomous;//package org.firstinspires.ftc.teamcode.opmodes.Autonomous;
+//package com.example.meepmeeptesting;
 
 
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.MeepMeep;
-import com.acmerobotics.roadrunner.roadrunner.DefaultBotBuilder;
-import com.acmerobotics.roadrunner.roadrunner.entity.RoadRunnerBotEntity;
+import com.acmerobotics.roadrunner.Actions;
+//import com.acmerobotics.roadrunner.MeepMeep;
+//import com.acmerobotics.roadrunner.roadrunner.DefaultBotBuilder;
+//import com.acmerobotics.roadrunner.roadrunner.entity.RoadRunnerBotEntity;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-public class AutoBlueLeave {
-    public static void main(String[] args) {
-        MeepMeep meepMeep = new MeepMeep(800);
+import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-        RoadRunnerBotEntity myBot = new DefaultBotBuilder(meepMeep)
-                // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
-                .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
-                .build();
+@Autonomous(name = "Blue leave auto")
+public class AutoBlueLeave extends LinearOpMode {
+    @Override
+    public void runOpMode() throws InterruptedException {
+        MecanumDrive drive = new MecanumDrive(hardwareMap, new Pose2d(60, 22, 0));
 
-        myBot.runAction(myBot.getDrive().actionBuilder(new Pose2d(60, 22, 0))
+        waitForStart();
 
-                .lineToX(30)
-                .build());
+        Actions.runBlocking(
+                drive.actionBuilder(new Pose2d(60, 22, 0))
+                        .lineToX(30)
+                        .build());
 
-        meepMeep.setBackground(MeepMeep.Background.FIELD_DECODE_OFFICIAL)
-                .setDarkMode(true)
-                .setBackgroundAlpha(0.95f)
-                .addEntity(myBot)
-                .start();
+
+     
+
+
     }
+
+  
 }
