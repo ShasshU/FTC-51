@@ -3,3 +3,5 @@ include ':TeamCode'
 
 project(':FtcRobotController').projectDir = new File('FtcRobotController')
 project(':TeamCode').projectDir = new File('TeamCode')
+include ':MeepMeepTesting'
+include ':ftcrobotcontroller:lib'
