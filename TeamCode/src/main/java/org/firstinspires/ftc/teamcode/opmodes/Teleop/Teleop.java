@@ -4,6 +4,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -45,7 +46,9 @@ public class Teleop extends OpMode {
         flywheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
 
-        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
+        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        flywheel2.setDirection(DcMotor.Direction.REVERSE);
 
 
         imu = hardwareMap.get(IMU.class,"imu");
@@ -115,13 +118,13 @@ public class Teleop extends OpMode {
         lastA = gamepad1.a;
 
         if (intakeOn) {
-            intake.setPower(1.0);
+            intake.setPower(0.7);
         } else {
             intake.setPower(0.0);
         }
         if (gamepad1.right_bumper) {
-            flywheel1.setPower(0.5);
-            flywheel1.setPower(0.5);
+            flywheel1.setPower(0.3);
+            flywheel2.setPower(0.3);
         } else {
             flywheel1.setPower(0);
             flywheel2.setPower(0);
