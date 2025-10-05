@@ -21,11 +21,13 @@ public class BasicMecanumDrive extends OpMode {
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
-       // rightFront.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
        // rightBack.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
     }
+
+
 
     @Override
     public void loop() {
@@ -53,5 +55,12 @@ public class BasicMecanumDrive extends OpMode {
         telemetry.addData("BL", backLeftPower);
         telemetry.addData("BR", backRightPower);
         telemetry.update();
+
+        if (gamepad1.a) {
+            leftFront.setPower(0.3);
+            rightBack.setPower(0.3);
+            leftBack.setPower(0.3);
+            rightFront.setPower(0.3);
+        }
     }
 }
