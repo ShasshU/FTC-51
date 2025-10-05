@@ -148,7 +148,7 @@ public final class MecanumDrive {
 
             // TODO: reverse encoders if needed
                //leftFront.setDirection(DcMotorSimple.Direction.REVERSE);
-               //rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
+            rightFront.setDirection(DcMotorSimple.Direction.REVERSE);
 
             this.pose = pose;
         }
