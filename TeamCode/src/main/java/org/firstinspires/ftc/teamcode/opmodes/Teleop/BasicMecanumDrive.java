@@ -12,17 +12,33 @@ public class BasicMecanumDrive extends OpMode {
     private DcMotor leftBack;
     private DcMotor rightBack;
 
+    private DcMotor flywheel1;
+
+    private DcMotor flywheel2;
+
+    private DcMotor intake;
+
+    private boolean lastA = false;
+
+    boolean intakeOn = false;
+
+
     @Override
     public void init() {
         leftFront  = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack   = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack  = hardwareMap.get(DcMotor.class, "rightBack");
+        intake = hardwareMap.get(DcMotor.class, "intake");
+        flywheel1 = hardwareMap.get(DcMotor.class, "flywheel1");
+        flywheel2 = hardwareMap.get(DcMotor.class, "flywheel2");
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
-       // rightBack.setDirection(DcMotor.Direction.FORWARD);
+        flywheel2.setDirection(DcMotor.Direction.REVERSE);
+
+        // rightBack.setDirection(DcMotor.Direction.FORWARD);
 
         telemetry.addData("Status", "Initialized");
     }
@@ -56,11 +72,22 @@ public class BasicMecanumDrive extends OpMode {
         telemetry.addData("BR", backRightPower);
         telemetry.update();
 
-        if (gamepad1.a) {
-            leftFront.setPower(0.3);
-            rightBack.setPower(0.3);
-            leftBack.setPower(0.3);
-            rightFront.setPower(0.3);
+        if (gamepad1.a && !lastA) {
+            intakeOn = !intakeOn;
+        }
+        lastA = gamepad1.a;
+
+        if (intakeOn) {
+            intake.setPower(0.7);
+        } else {
+            intake.setPower(0.0);
+        }
+        if (gamepad1.right_bumper) {
+            flywheel1.setPower(0.6);
+            flywheel2.setPower(0.6);
+        } else {
+            flywheel1.setPower(0);
+            flywheel2.setPower(0);
         }
     }
 }

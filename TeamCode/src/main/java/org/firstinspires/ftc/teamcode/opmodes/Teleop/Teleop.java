@@ -45,9 +45,9 @@ public class Teleop extends OpMode {
         flywheel1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         flywheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
         flywheel2.setDirection(DcMotor.Direction.REVERSE);
 
 
@@ -123,8 +123,8 @@ public class Teleop extends OpMode {
             intake.setPower(0.0);
         }
         if (gamepad1.right_bumper) {
-            flywheel1.setPower(0.3);
-            flywheel2.setPower(0.3);
+            flywheel1.setPower(0.6);
+            flywheel2.setPower(0.6);
         } else {
             flywheel1.setPower(0);
             flywheel2.setPower(0);
