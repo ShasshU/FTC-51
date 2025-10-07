@@ -10,6 +10,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
+import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 
 @TeleOp(name="Teleop", group="TeleOp") // FIELD ORIENTATED
 public class Teleop extends OpMode {
@@ -22,6 +23,8 @@ public class Teleop extends OpMode {
 
     private Flywheel flywheel;
     private Intake intake;
+
+    private Kicker kicker;
 
 
     private boolean lastA = false;
@@ -39,6 +42,7 @@ public class Teleop extends OpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         flywheel = new Flywheel(hardwareMap);
         intake = new Intake(hardwareMap);
+        kicker = new Kicker(hardwareMap);
 
 
         rightBack.setDirection(DcMotor.Direction.FORWARD);
@@ -112,5 +116,14 @@ public class Teleop extends OpMode {
         lastA = gamepad1.a;
 
         flywheel.setPower(gamepad1.right_bumper ? 0.3 : 0);
+
+        if (gamepad1.b) {
+            kicker.setServoPos(0.5);
+        }
+
+        if (gamepad1.y) {
+            kicker.setServoPos(-0.5);
+        }
     }
+
 }
