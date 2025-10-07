@@ -5,6 +5,7 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import com.acmerobotics.roadrunner.Action;
@@ -55,7 +56,7 @@ public class BlueFarAutoLeave extends LinearOpMode {
                 .lineToX(30)
                 .build();
 
-//        Action sequence2 = drive.actionBuilder(startPose)
+//
 //            .lineToX(20)
 //                .turn(Math.toRadians(90))
 //                .lineToY(20)
@@ -66,9 +67,7 @@ public class BlueFarAutoLeave extends LinearOpMode {
 //                .turn(Math.toRadians(90))
 //                .build();
 
-//        // Define the second trajectory sequence
-//        Action sequence2 = drive.actionBuilder(drive.getPoseEstimate())
-//                .lineTo(Xnew Vector2d(60, 10))
+
 //                .waitSeconds(2)
 //                .turn(Math.toRadians(-45))
 //                .strafeTo(new Vector2d(60, 0))
