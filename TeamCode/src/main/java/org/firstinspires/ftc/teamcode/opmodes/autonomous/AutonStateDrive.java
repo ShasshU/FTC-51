@@ -36,7 +36,6 @@ public class AutonStateDrive extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d startPose = new Pose2d(0, 0, 0);
-
         drive = new MecanumDrive(hardwareMap, startPose);
 
         imu = hardwareMap.get(IMU.class,"imu");
@@ -47,11 +46,27 @@ public class AutonStateDrive extends LinearOpMode {
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
-        Action sequence1 = drive.actionBuilder(startPose)
-                .lineToX(DISTANCE)
-                .waitSeconds(2)
-                .turn(Math.toRadians(45))        // turn +45 degrees (counterclockwise)
+//        Action sequence1 = drive.actionBuilder(startPose)
+//                .lineToX(DISTANCE)
+//                .waitSeconds(2)
+//                .turn(Math.toRadians(45))        // turn +45 degrees (counterclockwise)
+//                .build();
+
+        Pose2d startPos = new Pose2d(60, 22, 0);
+        Action sequence1 = drive.actionBuilder(startPos)
+                .lineToX(30)
                 .build();
+
+//        Action sequence2 = drive.actionBuilder(startPose)
+//            .lineToX(20)
+//                .turn(Math.toRadians(90))
+//                .lineToY(20)
+//                .turn(Math.toRadians(90))
+//                .lineToX(0)
+//                .turn(Math.toRadians(90))
+//                .lineToY(0)
+//                .turn(Math.toRadians(90))
+//                .build();
 
 //        // Define the second trajectory sequence
 //        Action sequence2 = drive.actionBuilder(drive.getPoseEstimate())
