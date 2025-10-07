@@ -8,6 +8,8 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @TeleOp(name="Teleop", group="TeleOp") // FIELD ORIENTATED
 public class Teleop extends OpMode {
@@ -18,16 +20,13 @@ public class Teleop extends OpMode {
     private DcMotor leftBack;
     private DcMotor rightBack;
 
-    private DcMotor flywheel1;
+    private Flywheel flywheel;
+    private Intake intake;
 
-    private DcMotor flywheel2;
-
-    private DcMotor intake;
 
     private boolean lastA = false;
 
 
-    boolean intakeOn = false;
 
     private IMU imu;
     double forward, strafe, rotate;
@@ -38,17 +37,12 @@ public class Teleop extends OpMode {
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
-        intake = hardwareMap.get(DcMotor.class, "intake");
-        flywheel1 = hardwareMap.get(DcMotor.class, "flywheel1");
-        flywheel2 = hardwareMap.get(DcMotor.class, "flywheel2");
+        flywheel = new Flywheel(hardwareMap);
+        intake = new Intake(hardwareMap);
 
-        flywheel1.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-        flywheel2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
-        rightFront.setDirection(DcMotor.Direction.REVERSE);
-        flywheel2.setDirection(DcMotor.Direction.REVERSE);
 
 
         imu = hardwareMap.get(IMU.class,"imu");
@@ -113,21 +107,10 @@ public class Teleop extends OpMode {
         this.driveFieldRelative(forward, strafe, rotate);
 
         if (gamepad1.a && !lastA) {
-            intakeOn = !intakeOn;
+            intake.toggleIntake();
         }
         lastA = gamepad1.a;
 
-        if (intakeOn) {
-            intake.setPower(0.7);
-        } else {
-            intake.setPower(0.0);
-        }
-        if (gamepad1.right_bumper) {
-            flywheel1.setPower(0.6);
-            flywheel2.setPower(0.6);
-        } else {
-            flywheel1.setPower(0);
-            flywheel2.setPower(0);
-        }
+        flywheel.setPower(gamepad1.right_bumper ? 0.3 : 0);
     }
-    }
+}
