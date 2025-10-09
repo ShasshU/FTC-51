@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.opmodes.Teleop;
 
+import static java.lang.Thread.sleep;
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -24,7 +26,8 @@ public class Teleop extends OpMode {
     private Flywheel flywheel;
     private Intake intake;
 
-    private Kicker kicker;
+    private Kicker kicker1;
+    private Kicker kicker2;
 
 
     private boolean lastA = false;
@@ -42,7 +45,8 @@ public class Teleop extends OpMode {
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
         flywheel = new Flywheel(hardwareMap);
         intake = new Intake(hardwareMap);
-        kicker = new Kicker(hardwareMap);
+        kicker1 = new Kicker(hardwareMap);
+        kicker2 = new Kicker(hardwareMap);
 
 
         rightBack.setDirection(DcMotor.Direction.FORWARD);
@@ -57,7 +61,8 @@ public class Teleop extends OpMode {
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
-        kicker.setServoPos(0.4);
+        kicker2.setServoPos(0.4);
+        kicker1.setServoPos(0.1);
 
 
 
@@ -120,11 +125,19 @@ public class Teleop extends OpMode {
         flywheel.setPower(gamepad1.right_bumper ? 0.3 : 0);
 
         if (gamepad1.b) {
-            kicker.setServoPos(0.8);
+            kicker1.setServoPos(0.4);
+            try {
+                sleep(200);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
+            kicker2.setServoPos(0.8);
+
         }
 
         if (gamepad1.y) {
-            kicker.setServoPos(0.4);
+            kicker1.setServoPos(0.8);
+            kicker2.setServoPos(0.4);
         }
     }
 

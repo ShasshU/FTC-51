@@ -4,14 +4,19 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Kicker {
-    private Servo kicker;
+    private Servo kicker1;
+    private Servo kicker2;
 
 
     public Kicker(HardwareMap hardwareMap){
-        kicker = hardwareMap.get(Servo.class, "kicker");
+        kicker1 = hardwareMap.get(Servo.class, "kicker1");
+        kicker2 = hardwareMap.get(Servo.class, "kicker2");
+
     }
 
     public void setServoPos(double angle) {
-        kicker.setPosition(angle);
+
+        kicker1.setPosition(angle);
+        kicker2.setPosition(angle);
     }
 }
