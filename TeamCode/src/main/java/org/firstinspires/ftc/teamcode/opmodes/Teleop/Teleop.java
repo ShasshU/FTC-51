@@ -57,6 +57,8 @@ public class Teleop extends OpMode {
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
+        kicker.setServoPos(0.4);
+
 
 
         telemetry.addData("Status", "Initialized");
@@ -118,11 +120,11 @@ public class Teleop extends OpMode {
         flywheel.setPower(gamepad1.right_bumper ? 0.3 : 0);
 
         if (gamepad1.b) {
-            kicker.setServoPos(0.5);
+            kicker.setServoPos(0.8);
         }
 
         if (gamepad1.y) {
-            kicker.setServoPos(-0.5);
+            kicker.setServoPos(0.4);
         }
     }
 
