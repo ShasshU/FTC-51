@@ -62,7 +62,7 @@ public class Teleop extends OpMode {
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
         kicker2.setServoPos(0.4);
-        kicker1.setServoPos(0.1);
+        kicker1.setServoPos(0.6);
 
 
 
@@ -122,10 +122,10 @@ public class Teleop extends OpMode {
         }
         lastA = gamepad1.a;
 
-        flywheel.setPower(gamepad1.right_bumper ? 0.3 : 0);
+        flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
 
         if (gamepad1.b) {
-            kicker1.setServoPos(0.4);
+            kicker1.setServoPos(0.2);
             try {
                 sleep(200);
             } catch (InterruptedException e) {
@@ -136,7 +136,7 @@ public class Teleop extends OpMode {
         }
 
         if (gamepad1.y) {
-            kicker1.setServoPos(0.8);
+            kicker1.setServoPos(0.6);
             kicker2.setServoPos(0.4);
         }
     }
