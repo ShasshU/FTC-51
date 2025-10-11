@@ -11,7 +11,6 @@ public class Kicker {
     public Kicker(HardwareMap hardwareMap){
         kicker1 = hardwareMap.get(Servo.class, "kicker1");
         kicker2 = hardwareMap.get(Servo.class, "kicker2");
-
     }
 
     public void setServoPos(double angle) {

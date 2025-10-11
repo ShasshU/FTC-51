@@ -61,7 +61,7 @@ public class Teleop extends OpMode {
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
-        kicker2.setServoPos(0.4);
+        kicker2.setServoPos(0.2);
         kicker1.setServoPos(0.6);
 
 
@@ -124,21 +124,47 @@ public class Teleop extends OpMode {
 
         flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
 
-        if (gamepad1.b) {
-            kicker1.setServoPos(0.2);
-            try {
-                sleep(200);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            kicker2.setServoPos(0.8);
+//        if (gamepad1.dpad_right) {
+//            kicker2.setServoPos(0.9);
+//        }
+//        else {
+//            kicker2.setServoPos(0.2);
+//        }
 
-        }
+//        if (gamepad1.dpad_up) {
+//            kicker1.setServoPos(0.2);
+//            try {
+//                sleep(200);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//            kicker2.setServoPos(0.9);
+//            try {
+//                sleep(200);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//            kicker2.setServoPos(0.2);
+//        }
+//
+//        if (gamepad1.dpad_left) {
+//            kicker1.setServoPos(0.3);
+//            try {
+//                sleep(200);
+//            } catch (InterruptedException e) {
+//                throw new RuntimeException(e);
+//            }
+//            kicker2.setServoPos(0.9);
+//        }
+//
+//        if (gamepad1.dpad_down) {
+//            kicker1.setServoPos(0.0);
+//            kicker2.setServoPos(0.2);
+//        }
 
-        if (gamepad1.y) {
-            kicker1.setServoPos(0.6);
-            kicker2.setServoPos(0.4);
-        }
+
+
+
     }
 
 }
