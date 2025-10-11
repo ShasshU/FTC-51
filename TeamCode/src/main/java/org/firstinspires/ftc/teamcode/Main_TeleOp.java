@@ -1,12 +1,12 @@
-package org.firstinspires.ftc.teamcode.opmodes.Teleop;
+package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Thread.sleep;
 
+
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
-import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 
 @TeleOp(name="Teleop", group="TeleOp") // FIELD ORIENTATED
-public class Teleop extends OpMode {
+public class Main_TeleOp extends LinearOpMode {
 
 
     private DcMotor leftFront;
@@ -26,11 +26,15 @@ public class Teleop extends OpMode {
     private Flywheel flywheel;
     private Intake intake;
 
+
     private Kicker kicker1;
-    private Kicker kicker2;
+   private Kicker kicker2;
 
 
     private boolean lastA = false;
+    private boolean lastRB = false;
+
+    public int buttonY = 0;
 
 
 
@@ -38,7 +42,8 @@ public class Teleop extends OpMode {
     double forward, strafe, rotate;
 
     @Override
-    public void init() {
+    public void runOpMode()
+    {
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
@@ -53,7 +58,7 @@ public class Teleop extends OpMode {
         leftFront.setDirection(DcMotor.Direction.REVERSE);
 
 
-        imu = hardwareMap.get(IMU.class,"imu");
+        imu = hardwareMap.get(IMU.class, "imu");
 
         RevHubOrientationOnRobot revHubOrientationOnRobot = new RevHubOrientationOnRobot(
                 RevHubOrientationOnRobot.LogoFacingDirection.LEFT,
@@ -61,12 +66,71 @@ public class Teleop extends OpMode {
 
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
-        kicker2.setServoPos(0.2);
-        kicker1.setServoPos(0.6);
-
+        kicker2.setServoPos2(0.5);
+        kicker1.setServoPos1(0.4);
 
 
         telemetry.addData("Status", "Initialized");
+        waitForStart();
+
+        while (opModeIsActive())
+        {
+            forward = -gamepad1.left_stick_y;
+            strafe = gamepad1.left_stick_x;
+            rotate = gamepad1.right_stick_x;
+
+            this.driveFieldRelative(forward, strafe, rotate);
+
+            if (gamepad1.a && !lastA) {
+                intake.toggleIntake();
+            }
+            lastA = gamepad1.a;
+
+            if (gamepad1.right_bumper && !lastRB) {
+                flywheel.toggleOuttake();
+            }
+            lastRB = gamepad1.right_bumper;
+
+            flywheel.setVelocity(gamepad1.right_bumper ? 220 : 0);
+
+            if (gamepad1.b) {
+                kicker2.setServoPos2(0.9);
+            } else {
+//                kicker2.setServoPos2(0.5);
+            }
+
+            if (gamepad1.y) {
+                buttonY = 1;
+//                kicker1.setServoPos1(0.9);
+//                sleep(1000);
+//                kicker2.setServoPos2(0.9);
+            } else {
+//                kicker1.setServoPos1(0.5);
+//                kicker2.setServoPos2(0.5);
+            }
+
+            if (gamepad1.x) {
+                kicker1.setServoPos1(1);
+            } else {
+                kicker1.setServoPos1(0.5);
+            }
+
+            if (buttonY == 1) {
+                kicker1.setServoPos1(0.9);
+                sleep(1000);
+                kicker2.setServoPos2(0.9);
+                sleep(1000);
+                buttonY=0;
+
+                if (buttonY == 0) {
+                    kicker1.setServoPos1(0.4);
+                    kicker2.setServoPos2(0.5);
+                    buttonY = 0;
+                }
+        }
+
+
+        }
     }
 
     public void drive(double forward, double strafe, double rotate) {
@@ -107,64 +171,8 @@ public class Teleop extends OpMode {
         newStrafe = newStrafe * 1.1; // <-- scales strafing to counter imperfect mecanum movement
 
         this.drive(newForward, newStrafe, rotate);
-    }
-
-    @Override
-    public void loop() {
-        forward = -gamepad1.left_stick_y;
-        strafe = gamepad1.left_stick_x;
-        rotate = gamepad1.right_stick_x;
-
-        this.driveFieldRelative(forward, strafe, rotate);
-
-        if (gamepad1.a && !lastA) {
-            intake.toggleIntake();
-        }
-        lastA = gamepad1.a;
-
-        flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
-
-//        if (gamepad1.dpad_right) {
-//            kicker2.setServoPos(0.9);
-//        }
-//        else {
-//            kicker2.setServoPos(0.2);
-//        }
-
-//        if (gamepad1.dpad_up) {
-//            kicker1.setServoPos(0.2);
-//            try {
-//                sleep(200);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//            kicker2.setServoPos(0.9);
-//            try {
-//                sleep(200);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//            kicker2.setServoPos(0.2);
-//        }
-//
-//        if (gamepad1.dpad_left) {
-//            kicker1.setServoPos(0.3);
-//            try {
-//                sleep(200);
-//            } catch (InterruptedException e) {
-//                throw new RuntimeException(e);
-//            }
-//            kicker2.setServoPos(0.9);
-//        }
-//
-//        if (gamepad1.dpad_down) {
-//            kicker1.setServoPos(0.0);
-//            kicker2.setServoPos(0.2);
-//        }
 
 
 
 
-    }
-
-}
+}}
