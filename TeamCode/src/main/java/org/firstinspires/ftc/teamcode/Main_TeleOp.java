@@ -36,8 +36,9 @@ public class Main_TeleOp extends LinearOpMode {
 
     public int buttonY = 0;
 
+    public int buttonB = 0;
 
-
+    public int buttonX = 0;
     private IMU imu;
     double forward, strafe, rotate;
 
@@ -56,6 +57,7 @@ public class Main_TeleOp extends LinearOpMode {
 
         rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
 
 
         imu = hardwareMap.get(IMU.class, "imu");
@@ -94,7 +96,7 @@ public class Main_TeleOp extends LinearOpMode {
             flywheel.setVelocity(gamepad1.right_bumper ? 220 : 0);
 
             if (gamepad1.b) {
-                kicker2.setServoPos2(0.9);
+//                kicker2.setServoPos2(0.9);
             } else {
 //                kicker2.setServoPos2(0.5);
             }
@@ -110,9 +112,10 @@ public class Main_TeleOp extends LinearOpMode {
             }
 
             if (gamepad1.x) {
-                kicker1.setServoPos1(1);
+                buttonX = 1;
+//                kicker1.setServoPos1(1);
             } else {
-                kicker1.setServoPos1(0.5);
+//                kicker1.setServoPos1(0.5);
             }
 
             if (buttonY == 1) {
@@ -122,7 +125,18 @@ public class Main_TeleOp extends LinearOpMode {
                 sleep(1000);
                 buttonY=0;
 
-                if (buttonY == 0) {
+            if (buttonB ==1) {
+                kicker2.setServoPos2(0.9);
+                buttonB = 0;
+            }
+
+            if (buttonX ==1) {
+                kicker1.setServoPos1(1);
+                buttonX = 0;
+            }
+
+                if (buttonY == 0 & buttonB ==0 & buttonX==0
+                ) {
                     kicker1.setServoPos1(0.4);
                     kicker2.setServoPos2(0.5);
                     buttonY = 0;
