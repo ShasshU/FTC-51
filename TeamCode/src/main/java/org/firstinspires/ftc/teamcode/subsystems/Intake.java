@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
 public class Intake {
-    private DcMotor intake;
+    private static DcMotor intake;
     private boolean intakeOn = false;
 
     public Intake(HardwareMap hardwareMap){
@@ -18,7 +18,7 @@ public class Intake {
     }
 
     // Directly set intake power if needed
-    public void setPower(double power){
+    public static void setPower(double power){
         intake.setPower(power);
     }
 }

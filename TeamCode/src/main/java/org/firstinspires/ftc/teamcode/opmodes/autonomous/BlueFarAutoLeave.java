@@ -1,6 +1,8 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import com.acmerobotics.roadrunner.InstantFunction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
@@ -11,6 +13,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import com.acmerobotics.roadrunner.Action;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.subsystems.Intake;
 
 @Autonomous()
 public class BlueFarAutoLeave extends LinearOpMode {
@@ -30,12 +33,19 @@ public class BlueFarAutoLeave extends LinearOpMode {
     public static double DISTANCE = 20;
     Pose2d startPos;
     Pose2d lastStepPos;
+    public class intakeOn implements InstantFunction {
+        @Override
+        public void run() {
+            Intake.setPower(0.7);
+        }
 
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d startPose = new Pose2d(0, 0, 0);
         drive = new MecanumDrive(hardwareMap, startPose);
+        Intake Intake = new Intake(hardwareMap);
 
         imu = hardwareMap.get(IMU.class,"imu");
 
@@ -53,7 +63,13 @@ public class BlueFarAutoLeave extends LinearOpMode {
 
         Pose2d startPos = new Pose2d(60, 22, 0);
         Action sequence1 = drive.actionBuilder(startPos)
-                .lineToX(30)
+                .lineToX(50)
+                .splineTo(new Vector2d(35,38), Math.toRadians(90))
+                .splineTo(new Vector2d(35,50), Math.toRadians(90))
+                .splineToLinearHeading(new Pose2d(14,15,Math.toRadians(90)), Math.toRadians(270))
+                .stopAndAdd(new intakeOn())
+                .splineToLinearHeading(new Pose2d(12,55,Math.toRadians(90)), Math.toRadians(270))
+                .splineToLinearHeading(new Pose2d(-15,-15,Math.toRadians(225)), Math.toRadians(270))
                 .build();
 
 //
