@@ -57,7 +57,7 @@ public class TestTeleop extends LinearOpMode {
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
         // Initialize servos
-        kicker1.setServoPos1(0.4);
+        kicker1.setServoPos1(0.3);
         kicker2.setServoPos2(0.5);
 
         telemetry.addData("Status", "Initialized");
@@ -84,16 +84,18 @@ public class TestTeleop extends LinearOpMode {
 
             // ====== KICKER LOGIC ======
             // D-pad UP sequence (shoot both)
+            //2 balls
             if (gamepad1.dpad_up) {
-                kicker1.setServoPos1(0.9);
-                sleep(300);
+                kicker1.setServoPos1(0.85);
+                sleep(1000);
                 kicker2.setServoPos2(0.9);
-                sleep(300);
-                kicker1.setServoPos1(0.4);
+                sleep(1000);
+                kicker1.setServoPos1(0.3);
                 kicker2.setServoPos2(0.5);
             }
 
             // D-pad RIGHT (only kicker2)
+            // 3 ball
             if (gamepad1.dpad_right) {
                 kicker2.setServoPos2(0.9);
                 sleep(200);
@@ -101,10 +103,11 @@ public class TestTeleop extends LinearOpMode {
             }
 
             // D-pad LEFT (only kicker1)
+            // 1 balls
             if (gamepad1.dpad_left) {
-                kicker1.setServoPos1(1.0);
-                sleep(200);
-                kicker1.setServoPos1(0.4);
+                kicker1.setServoPos1(1);
+                sleep (200);
+                kicker1.setServoPos1(0.3);
             }
 
             // Reset heading if needed
@@ -140,8 +143,8 @@ public class TestTeleop extends LinearOpMode {
         double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
         // Correct atan2 order and coordinate math
-        double theta = Math.atan2(strafe, forward);
-        double r = Math.hypot(strafe, forward);
+        double theta = Math.atan2(forward, strafe);
+        double r = Math.hypot(forward, strafe);
         theta = AngleUnit.normalizeRadians(theta - heading);
 
         double newForward = r * Math.cos(theta);

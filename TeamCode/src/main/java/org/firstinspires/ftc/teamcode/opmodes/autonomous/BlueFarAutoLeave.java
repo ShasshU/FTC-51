@@ -40,6 +40,12 @@ public class BlueFarAutoLeave extends LinearOpMode {
         }
 
     }
+    public class intakeOff implements InstantFunction {
+        @Override
+        public void run() {
+            Intake.setPower(0.0);
+        }
+    }
 
     @Override
     public void runOpMode() throws InterruptedException {
@@ -69,6 +75,7 @@ public class BlueFarAutoLeave extends LinearOpMode {
                 .splineToLinearHeading(new Pose2d(14,15,Math.toRadians(90)), Math.toRadians(270))
                 .stopAndAdd(new intakeOn())
                 .splineToLinearHeading(new Pose2d(12,55,Math.toRadians(90)), Math.toRadians(270))
+                .stopAndAdd(new intakeOff())
                 .splineToLinearHeading(new Pose2d(-15,-15,Math.toRadians(225)), Math.toRadians(270))
                 .build();
 
