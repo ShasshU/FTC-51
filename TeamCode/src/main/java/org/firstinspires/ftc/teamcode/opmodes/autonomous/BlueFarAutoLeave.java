@@ -12,7 +12,7 @@ import com.acmerobotics.roadrunner.Action;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 
-@Autonomous()
+@Autonomous(name = "BlueFarAutonomousLeave")
 public class BlueFarAutoLeave extends LinearOpMode {
 
     enum State
