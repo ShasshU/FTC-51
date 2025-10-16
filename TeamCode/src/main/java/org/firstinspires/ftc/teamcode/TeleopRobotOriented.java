@@ -2,13 +2,10 @@ package org.firstinspires.ftc.teamcode;
 
 import static java.lang.Thread.sleep;
 
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
@@ -26,13 +23,12 @@ public class TeleopRobotOriented extends LinearOpMode {
 
     // State variables
     private boolean lastA = false;
-    private boolean lastRB = false;
 
     double forward, strafe, rotate;
 
     @Override
     public void runOpMode() {
-        // Hardware mapping
+        // ===== HARDWARE MAP =====
         leftFront = hardwareMap.get(DcMotor.class, "leftFront");
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
@@ -43,11 +39,9 @@ public class TeleopRobotOriented extends LinearOpMode {
         kicker1 = new Kicker(hardwareMap);
         kicker2 = new Kicker(hardwareMap);
 
-        // Motor directions (match your working code)
+        // Keep your working motor directions — no changes here
         rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
-
-        // Initialize IMU
 
         // Initialize servos
         kicker1.setServoPos1(0.3);
@@ -59,25 +53,24 @@ public class TeleopRobotOriented extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            // ====== DRIVE CONTROL ======
+            // ===== DRIVE CONTROL =====
             forward = -gamepad1.left_stick_y;
             strafe = gamepad1.left_stick_x;
             rotate = gamepad1.right_stick_x;
 
+            drive(forward, strafe, rotate);   // ✅ this line makes it move now
 
-            // ====== INTAKE TOGGLE ======
+            // ===== INTAKE TOGGLE =====
             if (gamepad1.a && !lastA) {
                 intake.toggleIntake();
             }
             lastA = gamepad1.a;
 
-            // ====== FLYWHEEL CONTROL ======
+            // ===== FLYWHEEL CONTROL =====
             flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
 
-            // ====== KICKER LOGIC ======
-            // D-pad UP sequence (shoot both)
-            //2 balls
-            if (gamepad1.dpad_up) {
+            // ===== KICKER LOGIC =====
+            if (gamepad1.dpad_up) {  // both
                 kicker1.setServoPos1(0.85);
                 sleep(1000);
                 kicker2.setServoPos2(0.9);
@@ -86,28 +79,21 @@ public class TeleopRobotOriented extends LinearOpMode {
                 kicker2.setServoPos2(0.5);
             }
 
-            // D-pad RIGHT (only kicker2)
-            // 3 ball
-            if (gamepad1.dpad_right) {
+            if (gamepad1.dpad_right) {  // kicker2 only
                 kicker2.setServoPos2(0.9);
                 sleep(200);
                 kicker2.setServoPos2(0.5);
             }
 
-            // D-pad LEFT (only kicker1)
-            // 1 balls
-            if (gamepad1.dpad_left) {
+            if (gamepad1.dpad_left) {  // kicker1 only
                 kicker1.setServoPos1(1);
-                sleep (200);
+                sleep(200);
                 kicker1.setServoPos1(0.3);
             }
-
-
         }
     }
 
-    // ----- DRIVE METHODS -----
-
+    // ----- DRIVE METHOD -----
     public void drive(double forward, double strafe, double rotate) {
         double frontLeftPower = forward + strafe + rotate;
         double backLeftPower  = forward - strafe + rotate;
@@ -124,6 +110,4 @@ public class TeleopRobotOriented extends LinearOpMode {
         rightFront.setPower(frontRightPower / maxPower);
         rightBack.setPower(backRightPower / maxPower);
     }
-
-
 }
