@@ -25,7 +25,7 @@ public class Flywheel {
         flywheel1.setPower(outtakeOn ? 220 : 0);
         flywheel2.setPower(outtakeOn ? 220 : 0);
     }
-    public void setVelocity(double vel){
+    public static void setVelocity(double vel){
         flywheel1.setVelocity(vel);
         flywheel2.setVelocity(vel);
     }

@@ -1,23 +1,20 @@
 package org.firstinspires.ftc.teamcode.opmodes.autonomous;
 
+import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantFunction;
 import com.acmerobotics.roadrunner.Pose2d;
-import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.qualcomm.robotcore.hardware.IMU;
-
-import com.acmerobotics.roadrunner.Action;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 
 @Autonomous()
-public class BlueFarAutoLeave extends LinearOpMode {
+public class RedNearAutoLeave extends LinearOpMode {
 
     enum State
     {
@@ -41,7 +38,6 @@ public class BlueFarAutoLeave extends LinearOpMode {
         }
 
     }
-
     public class FlywheelOn implements InstantFunction {
         @Override
         public void run() {
@@ -75,7 +71,7 @@ public class BlueFarAutoLeave extends LinearOpMode {
 //                .turn(Math.toRadians(45))        // turn +45 degrees (counterclockwise)
 //                .build();
 
-        Pose2d startPos = new Pose2d(60, 22, 0);
+        Pose2d startPos = new Pose2d(-28, -22, Math.toRadians(180));
         Action sequence1 = drive.actionBuilder(startPos)
                 .lineToX(50)
 //                .splineTo(new Vector2d(35,38), Math.toRadians(90))
