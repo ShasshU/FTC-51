@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 
-@TeleOp(name="TestTeleop", group="TeleOp")
+@TeleOp(name = "TestTeleop", group = "TeleOp")
 public class TestTeleop extends LinearOpMode {
 
     // Drive motors
@@ -83,8 +83,6 @@ public class TestTeleop extends LinearOpMode {
             flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
 
             // ====== KICKER LOGIC ======
-            // D-pad UP sequence (shoot both)
-            //2 balls
             if (gamepad1.dpad_up) {
                 kicker1.setServoPos1(0.85);
                 sleep(1000);
@@ -94,23 +92,18 @@ public class TestTeleop extends LinearOpMode {
                 kicker2.setServoPos2(0.5);
             }
 
-            // D-pad RIGHT (only kicker2)
-            // 3 ball
             if (gamepad1.dpad_right) {
                 kicker2.setServoPos2(0.9);
                 sleep(200);
                 kicker2.setServoPos2(0.5);
             }
 
-            // D-pad LEFT (only kicker1)
-            // 1 balls
             if (gamepad1.dpad_left) {
                 kicker1.setServoPos1(1);
-                sleep (200);
+                sleep(200);
                 kicker1.setServoPos1(0.3);
             }
 
-            // Reset heading if needed
             if (gamepad1.left_bumper) {
                 imu.resetYaw();
             }
@@ -121,12 +114,11 @@ public class TestTeleop extends LinearOpMode {
     }
 
     // ----- DRIVE METHODS -----
-
     public void drive(double forward, double strafe, double rotate) {
         double frontLeftPower = forward + strafe + rotate;
-        double backLeftPower  = forward - strafe + rotate;
+        double backLeftPower = forward - strafe + rotate;
         double frontRightPower = forward - strafe - rotate;
-        double backRightPower  = forward + strafe - rotate;
+        double backRightPower = forward + strafe - rotate;
 
         double maxPower = Math.max(1.0,
                 Math.max(Math.abs(frontLeftPower),
@@ -142,13 +134,12 @@ public class TestTeleop extends LinearOpMode {
     public void driveFieldRelative(double forward, double strafe, double rotate) {
         double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        // Correct atan2 order and coordinate math
         double theta = Math.atan2(forward, strafe);
-        double r = Math.hypot(forward, strafe);
+        double r = Math.hypot(strafe, forward);
         theta = AngleUnit.normalizeRadians(theta - heading);
 
-        double newForward = r * Math.cos(theta);
-        double newStrafe  = r * Math.sin(theta) * 1.1;  // Strafing correction
+        double newForward = r * Math.sin(theta);
+        double newStrafe = r * Math.cos(theta) * 1.1;  // Strafing correction
 
         drive(newForward, newStrafe, rotate);
     }
