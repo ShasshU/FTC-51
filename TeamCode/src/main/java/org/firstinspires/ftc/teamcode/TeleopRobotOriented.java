@@ -13,7 +13,7 @@ import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 
-@TeleOp(name="TestTeleop", group="TeleOp")
+@TeleOp(name="TeleopRobotOriented", group="TeleOp")
 public class TeleopRobotOriented extends LinearOpMode {
 
     // Drive motors
@@ -28,7 +28,6 @@ public class TeleopRobotOriented extends LinearOpMode {
     private boolean lastA = false;
     private boolean lastRB = false;
 
-    private IMU imu;
     double forward, strafe, rotate;
 
     @Override
@@ -103,7 +102,7 @@ public class TeleopRobotOriented extends LinearOpMode {
                 kicker1.setServoPos1(0.3);
             }
 
-            
+
         }
     }
 
