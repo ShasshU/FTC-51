@@ -6,7 +6,8 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 
 public class Flywheel {
     private boolean outtakeOn = false;
-    private DcMotorEx flywheel1, flywheel2;
+    private static DcMotorEx flywheel1;
+    private static DcMotorEx flywheel2;
 
     public Flywheel(HardwareMap hardwareMap){
         this.flywheel1 = hardwareMap.get(DcMotorEx.class, "flywheel1");
