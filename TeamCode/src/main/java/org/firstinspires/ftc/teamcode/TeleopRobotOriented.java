@@ -42,6 +42,8 @@ public class TeleopRobotOriented extends LinearOpMode {
         // Keep your working motor directions — no changes here
         rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
+        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
 
         // Initialize servos
         kicker1.setServoPos1(0.3);
@@ -66,8 +68,11 @@ public class TeleopRobotOriented extends LinearOpMode {
             }
             lastA = gamepad1.a;
 
+            double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
+
             // ===== FLYWHEEL CONTROL =====
-            flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
+            //flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
+            flywheel.setVelocity(targetVelocity);
 
             // ===== KICKER LOGIC =====
             if (gamepad1.dpad_up) {  // both
@@ -87,11 +92,13 @@ public class TeleopRobotOriented extends LinearOpMode {
 
             if (gamepad1.dpad_left) {  // kicker1 only
                 kicker1.setServoPos1(1);
-                sleep(200);
+                sleep(1000);
                 kicker1.setServoPos1(0.3);
             }
         }
     }
+
+
 
     // ----- DRIVE METHOD -----
     public void drive(double forward, double strafe, double rotate) {
