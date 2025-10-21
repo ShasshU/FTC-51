@@ -132,20 +132,15 @@ public class TestTeleop extends LinearOpMode {
     }
 
     public void driveFieldRelative(double forward, double strafe, double rotate) {
+        double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
+
         double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
+        theta = AngleUnit.normalizeRadians(theta - heading);
 
-        theta = AngleUnit.normalizeRadians(theta -
-                imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS));
         double newForward = r * Math.sin(theta);
-        double newStrafe = r * Math.cos(theta);
+        double newStrafe = r * Math.cos(theta) * 1.1;  // Strafing correction
 
-        newStrafe = newStrafe * 1.1; // <-- scales strafing to counter imperfect mecanum movement
-
-        this.drive(newForward, newStrafe, rotate);
-
-
-
-
+        drive(newForward, newStrafe, rotate);
     }
 }
