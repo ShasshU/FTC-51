@@ -78,9 +78,9 @@ public class BlueNearPreload extends LinearOpMode {
         kicker1.setServoPos1(0.3);
         kicker2.setServoPos2(0.5);
 
-        Pose2d startPos = new Pose2d(-28, 22, Math.toRadians(180));
+        Pose2d startPos = new Pose2d(-55, -55, Math.toRadians(225));
         Action sequence1 = drive.actionBuilder(startPos)
-                .lineToX(10)
+                .lineToX(-10)
                 .waitSeconds(4)
 //                .splineTo(new Vector2d(-15,-15), Math.toRadians(225))
 //                .splineTo(new Vector2d(35,38), Math.toRadians(90))

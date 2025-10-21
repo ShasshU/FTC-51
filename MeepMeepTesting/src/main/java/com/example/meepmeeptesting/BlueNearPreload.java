@@ -15,11 +15,11 @@ public class BlueNearPreload {
                 // Set bot constraints: maxVel, maxAccel, maxAngVel, maxAngAccel, track width
                 .setConstraints(60, 60, Math.toRadians(180), Math.toRadians(180), 15)
                 .build();
-        Pose2d startPos = new Pose2d(-28, 22, Math.toRadians(180));
+        Pose2d startPos = new Pose2d(-55, -55, Math.toRadians(225));
         myBot.runAction(myBot.getDrive().actionBuilder(startPos)
-                .lineToX(10)
-                .splineTo(new Vector2d(-15,-15), Math.toRadians(225))
-//                .splineTo(new Vector2d(35,50), Math.toRadians(90))
+
+//                .splineTo(new Vector2d(-15,-15), Math.toRadians(225))
+                  .lineToX(-10)
 //                .splineToLinearHeading(new Pose2d(14,15,Math.toRadians(90)), Math.toRadians(270))
 //                .splineToLinearHeading(new Pose2d(12,55,Math.toRadians(90)), Math.toRadians(270))
 //                .splineToLinearHeading(new Pose2d(-15,-15,Math.toRadians(225)), Math.toRadians(270))
