@@ -82,41 +82,16 @@ public class BlueNearPreload extends LinearOpMode {
         Action sequence1 = drive.actionBuilder(startPos)
                 .lineToX(-10)
                 .waitSeconds(4)
-//                .splineTo(new Vector2d(-15,-15), Math.toRadians(225))
-//                .splineTo(new Vector2d(35,38), Math.toRadians(90))
-//                .splineTo(new Vector2d(35,50), Math.toRadians(90))
-//                .splineToLinearHeading(new Pose2d(14,15,Math.toRadians(90)), Math.toRadians(270))
-//                .stopAndAdd(new intakeOn())
-//                .splineToLinearHeading(new Pose2d(12,55,Math.toRadians(90)), Math.toRadians(270))
-//                .stopAndAdd(new intakeOff())
-//                .splineToLinearHeading(new Pose2d(-15,-15,Math.toRadians(225)), Math.toRadians(270))
                 .build();
 
 //
-//            .lineToX(20)
-//                .turn(Math.toRadians(90))
-//                .lineToY(20)
-//                .turn(Math.toRadians(90))
-//                .lineToX(0)
-//                .turn(Math.toRadians(90))
-//                .lineToY(0)
-//                .turn(Math.toRadians(90))
-//                .build();
-
-
-//                .waitSeconds(2)
-//                .turn(Math.toRadians(-45))
-//                .strafeTo(new Vector2d(60, 0))
-//                .build();
-
-        // Wait for start
+//
         waitForStart();
         if (isStopRequested()) {
             return;
         }
 
-        // Execute the first trajectory sequence
-        //Actions.runBlocking(sequence1);
+        Actions.runBlocking(sequence1);
 
         double targetVelocity = flywheel.getShotVelocity(Flywheel.ShotMode.NEAR);
 

@@ -10,7 +10,7 @@ public class Kicker {
 
     public Kicker(HardwareMap hardwareMap){
        kicker1 = hardwareMap.get(Servo.class, "kicker1");
-        kicker2 = hardwareMap.get(Servo.class, "kicker2");
+       kicker2 = hardwareMap.get(Servo.class, "kicker2");
     }
 
     public static void setServoPos1(double angle) {
