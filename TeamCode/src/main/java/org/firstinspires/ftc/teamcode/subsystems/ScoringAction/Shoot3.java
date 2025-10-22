@@ -33,23 +33,23 @@ public class Shoot3 {
     private final double K2_FIRE_2 = 0.9;
     private final double K1_FIRE_1 = 1.0;
 
-    // Timings
-    private final double SPIN_UP_SECONDS = 1.2;
-    private final double FEED_WAIT_SECONDS = 0.4;
+    // Timings (increase FEED_WAIT_SECONDS to slow kickers)
+    private final double SPIN_UP_SECONDS = 1.5;
+    private final double FEED_WAIT_SECONDS = 3;
 
     public Shoot3(Flywheel flywheel, Kicker kicker1, Kicker kicker2) {
         this.flywheel = flywheel;
         this.kicker1 = kicker1;
         this.kicker2 = kicker2;
 
-        // Ensure correct init positions
+        // Ensure correct initial positions
         kicker1.setServoPos1(K1_INITIAL);
         kicker2.setServoPos2(K2_INITIAL);
     }
 
     public void start() {
         if (state != State.IDLE && state != State.DONE) return; // prevent restart mid-sequence
-        flywheel.setVelocity(flywheel.getShotVelocity(Flywheel.ShotMode.NEAR)); // spin up first
+        flywheel.setVelocity(250); // spin up flywheel at same speed as right bumper
         timer.reset();
         state = State.SPIN_UP;
     }
@@ -105,15 +105,14 @@ public class Shoot3 {
             case WAIT_1:
                 if (timer.seconds() >= FEED_WAIT_SECONDS) {
                     kicker1.setServoPos1(K1_INITIAL);
-                    flywheel.setVelocity(flywheel.getShotVelocity(Flywheel.ShotMode.OFF));
+                    flywheel.setVelocity(0); // stop flywheel
                     state = State.STOP_FLYWHEEL;
                     timer.reset();
                 }
                 return true;
 
             case STOP_FLYWHEEL:
-                // Give a short buffer for the wheel to spin down before resetting
-                if (timer.seconds() >= 0.3) {
+                if (timer.seconds() >= 0.3) { // optional buffer
                     state = State.DONE;
                 }
                 return true;
@@ -122,10 +121,11 @@ public class Shoot3 {
                 state = State.IDLE;
                 return false;
         }
+
         return false;
     }
 
     public boolean isRunning() {
-        return !(state == State.IDLE);
+        return state != State.IDLE;
     }
 }
