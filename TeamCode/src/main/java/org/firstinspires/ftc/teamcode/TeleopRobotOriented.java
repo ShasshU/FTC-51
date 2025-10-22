@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
+import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.Shoot3;
 
 @TeleOp(name="TeleopRobotOriented", group="TeleOp")
 public class TeleopRobotOriented extends LinearOpMode {
@@ -25,6 +26,8 @@ public class TeleopRobotOriented extends LinearOpMode {
     private boolean lastA = false;
 
     double forward, strafe, rotate;
+    private Shoot3 ScoringSequence;
+    private boolean lastDpadDown = false; //used for scoring action, change later
 
     @Override
     public void runOpMode() {
@@ -44,6 +47,8 @@ public class TeleopRobotOriented extends LinearOpMode {
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
+
+        ScoringSequence = new Shoot3(flywheel, kicker1, kicker2);
 
         // Initialize servos
         kicker1.setServoPos1(0.3);
@@ -68,11 +73,20 @@ public class TeleopRobotOriented extends LinearOpMode {
             }
             lastA = gamepad1.a;
 
+            if (ScoringSequence.isRunning()) {
+                ScoringSequence.update();
+            }
+
             double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
 
             // ===== FLYWHEEL CONTROL =====
             //flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
             flywheel.setVelocity(targetVelocity);
+
+            if (gamepad1.dpad_down && !lastDpadDown) {
+                ScoringSequence.start(); // start the full 3→2→1 sequence
+            }
+            lastDpadDown = gamepad1.dpad_down;
 
             // ===== KICKER LOGIC =====
             if (gamepad1.dpad_up) {  // both

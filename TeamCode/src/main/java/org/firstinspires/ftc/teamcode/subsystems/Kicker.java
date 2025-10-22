@@ -5,7 +5,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 public class Kicker {
    private static Servo kicker1;
-    private Servo kicker2;
+    private static Servo kicker2;
 
 
     public Kicker(HardwareMap hardwareMap){
