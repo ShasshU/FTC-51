@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.subsystems.ScoringAction;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 
@@ -24,15 +23,17 @@ public class Shoot3 {
 
     private State state = State.IDLE;
 
-    private final double K1_INITIAL = 0.3;     // kicker1 initial in TeleOp
-    private final double K2_INITIAL = 0.5;     // kicker2 initial in TeleOp
+    // Initial positions (match TeleOp)
+    private final double K1_INITIAL = 0.3;
+    private final double K2_INITIAL = 0.5;
 
-    private final double K2_FIRE_3 = 0.9;      // dpad_right (3-ball)
-    private final double K1_FIRE_2 = 0.85;     // dpad_up (both) kicker1 pos
-    private final double K2_FIRE_2 = 0.9;      // dpad_up (both) kicker2 pos
-    private final double K1_FIRE_1 = 1.0;      // dpad_left (1-ball)
+    // Fire positions
+    private final double K2_FIRE_3 = 0.9;
+    private final double K1_FIRE_2 = 0.85;
+    private final double K2_FIRE_2 = 0.9;
+    private final double K1_FIRE_1 = 1.0;
 
-    // timing (tweakable)
+    // Timings
     private final double SPIN_UP_SECONDS = 1.2;
     private final double FEED_WAIT_SECONDS = 0.4;
 
@@ -41,17 +42,17 @@ public class Shoot3 {
         this.kicker1 = kicker1;
         this.kicker2 = kicker2;
 
-        // ensure servos are at the same init positions used in TeleOp
-        Kicker.setServoPos1(K1_INITIAL);   // static setter in your Kicker class
+        // Ensure correct init positions
+        kicker1.setServoPos1(K1_INITIAL);
         kicker2.setServoPos2(K2_INITIAL);
     }
 
     public void start() {
-        if (state != State.IDLE && state != State.DONE) return; // already running
-        state = State.SPIN_UP;
+        if (state != State.IDLE && state != State.DONE) return; // prevent restart mid-sequence
+        flywheel.setVelocity(flywheel.getShotVelocity(Flywheel.ShotMode.NEAR)); // spin up first
         timer.reset();
+        state = State.SPIN_UP;
     }
-
 
     public boolean update() {
         switch (state) {
@@ -59,65 +60,68 @@ public class Shoot3 {
                 return false;
 
             case SPIN_UP:
-                Flywheel.setVelocity(flywheel.getShotVelocity(Flywheel.ShotMode.NEAR));
-                timer.reset();
-                state = State.SHOOT_3;
+                if (timer.seconds() >= SPIN_UP_SECONDS) {
+                    state = State.SHOOT_3;
+                    timer.reset();
+                }
                 return true;
 
             case SHOOT_3:
                 kicker2.setServoPos2(K2_FIRE_3);
-                timer.reset();
                 state = State.WAIT_3;
+                timer.reset();
                 return true;
 
             case WAIT_3:
                 if (timer.seconds() >= FEED_WAIT_SECONDS) {
                     kicker2.setServoPos2(K2_INITIAL);
-                    timer.reset();
                     state = State.SHOOT_2;
+                    timer.reset();
                 }
                 return true;
 
             case SHOOT_2:
-                Kicker.setServoPos1(K1_FIRE_2);
+                kicker1.setServoPos1(K1_FIRE_2);
                 kicker2.setServoPos2(K2_FIRE_2);
-                timer.reset();
                 state = State.WAIT_2;
+                timer.reset();
                 return true;
 
             case WAIT_2:
                 if (timer.seconds() >= FEED_WAIT_SECONDS) {
-                    Kicker.setServoPos1(K1_INITIAL);
+                    kicker1.setServoPos1(K1_INITIAL);
                     kicker2.setServoPos2(K2_INITIAL);
-                    timer.reset();
                     state = State.SHOOT_1;
+                    timer.reset();
                 }
                 return true;
 
             case SHOOT_1:
-                Kicker.setServoPos1(K1_FIRE_1);
-                timer.reset();
+                kicker1.setServoPos1(K1_FIRE_1);
                 state = State.WAIT_1;
+                timer.reset();
                 return true;
 
             case WAIT_1:
                 if (timer.seconds() >= FEED_WAIT_SECONDS) {
-                    Kicker.setServoPos1(K1_INITIAL);
-                    timer.reset();
+                    kicker1.setServoPos1(K1_INITIAL);
+                    flywheel.setVelocity(flywheel.getShotVelocity(Flywheel.ShotMode.OFF));
                     state = State.STOP_FLYWHEEL;
+                    timer.reset();
                 }
                 return true;
 
             case STOP_FLYWHEEL:
-                Flywheel.setVelocity(flywheel.getShotVelocity(Flywheel.ShotMode.OFF));
-                state = State.DONE;
+                // Give a short buffer for the wheel to spin down before resetting
+                if (timer.seconds() >= 0.3) {
+                    state = State.DONE;
+                }
                 return true;
 
             case DONE:
-                state = State.IDLE; // reset so it can be started again later
+                state = State.IDLE;
                 return false;
         }
-
         return false;
     }
 

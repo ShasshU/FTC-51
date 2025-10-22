@@ -24,10 +24,10 @@ public class TeleopRobotOriented extends LinearOpMode {
 
     // State variables
     private boolean lastA = false;
+    private boolean lastDpadDown = false;
 
     double forward, strafe, rotate;
-    private Shoot3 ScoringSequence;
-    private boolean lastDpadDown = false; //used for scoring action, change later
+    private Shoot3 scoringSequence;
 
     @Override
     public void runOpMode() {
@@ -42,13 +42,13 @@ public class TeleopRobotOriented extends LinearOpMode {
         kicker1 = new Kicker(hardwareMap);
         kicker2 = new Kicker(hardwareMap);
 
-        // Keep your working motor directions — no changes here
+        // Motor directions — these match your working drive config
         rightBack.setDirection(DcMotor.Direction.FORWARD);
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftBack.setDirection(DcMotor.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
 
-        ScoringSequence = new Shoot3(flywheel, kicker1, kicker2);
+        scoringSequence = new Shoot3(flywheel, kicker1, kicker2);
 
         // Initialize servos
         kicker1.setServoPos1(0.3);
@@ -60,12 +60,12 @@ public class TeleopRobotOriented extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+
             // ===== DRIVE CONTROL =====
             forward = -gamepad1.left_stick_y;
             strafe = gamepad1.left_stick_x;
             rotate = gamepad1.right_stick_x;
-
-            drive(forward, strafe, rotate);   // ✅ this line makes it move now
+            drive(forward, strafe, rotate);
 
             // ===== INTAKE TOGGLE =====
             if (gamepad1.a && !lastA) {
@@ -73,22 +73,21 @@ public class TeleopRobotOriented extends LinearOpMode {
             }
             lastA = gamepad1.a;
 
-            if (ScoringSequence.isRunning()) {
-                ScoringSequence.update();
-            }
-
-            double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
-
             // ===== FLYWHEEL CONTROL =====
-            //flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
+            double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
             flywheel.setVelocity(targetVelocity);
 
+            // ===== SCORING SEQUENCE =====
             if (gamepad1.dpad_down && !lastDpadDown) {
-                ScoringSequence.start(); // start the full 3→2→1 sequence
+                scoringSequence.start();
             }
             lastDpadDown = gamepad1.dpad_down;
 
-            // ===== KICKER LOGIC =====
+            if (scoringSequence.isRunning()) {
+                scoringSequence.update();
+            }
+
+            // ===== MANUAL KICKER CONTROL =====
             if (gamepad1.dpad_up) {  // both
                 kicker1.setServoPos1(0.85);
                 sleep(1000);
@@ -111,8 +110,6 @@ public class TeleopRobotOriented extends LinearOpMode {
             }
         }
     }
-
-
 
     // ----- DRIVE METHOD -----
     public void drive(double forward, double strafe, double rotate) {
