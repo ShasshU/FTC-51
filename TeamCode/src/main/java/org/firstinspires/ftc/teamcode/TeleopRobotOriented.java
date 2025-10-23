@@ -74,8 +74,11 @@ public class TeleopRobotOriented extends LinearOpMode {
             lastA = gamepad1.a;
 
             // ===== FLYWHEEL CONTROL =====
-            double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
-            flywheel.setVelocity(targetVelocity);
+            // Only use manual bumper control if scoring sequence is NOT running
+            if (!scoringSequence.isRunning()) {
+                double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
+                flywheel.setVelocity(targetVelocity);
+            }
 
             // ===== SCORING SEQUENCE =====
             if (gamepad1.dpad_down && !lastDpadDown) {
