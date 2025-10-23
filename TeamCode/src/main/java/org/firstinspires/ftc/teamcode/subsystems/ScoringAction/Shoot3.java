@@ -49,12 +49,14 @@ public class Shoot3 {
 
     public void start() {
         if (state != State.IDLE && state != State.DONE) return; // prevent restart mid-sequence
-        flywheel.setVelocity(250); // spin up flywheel at same speed as right bumper
         timer.reset();
         state = State.SPIN_UP;
     }
 
     public boolean update() {
+        // Keep flywheel spinning at NEAR speed during the whole sequence
+        flywheel.setVelocity(200); // NEAR_VELOCITY
+
         switch (state) {
             case IDLE:
                 return false;
@@ -105,7 +107,7 @@ public class Shoot3 {
             case WAIT_1:
                 if (timer.seconds() >= FEED_WAIT_SECONDS) {
                     kicker1.setServoPos1(K1_INITIAL);
-                    flywheel.setVelocity(0); // stop flywheel
+                    flywheel.setVelocity(0); // stop flywheel at the very end
                     state = State.STOP_FLYWHEEL;
                     timer.reset();
                 }
