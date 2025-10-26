@@ -35,7 +35,7 @@ public class Shoot3 {
 
     // Timings (increase FEED_WAIT_SECONDS to slow kickers)
     private final double SPIN_UP_SECONDS = 1.5;
-    private final double FEED_WAIT_SECONDS = 3;
+    private final double FEED_WAIT_SECONDS = 1.5;
 
     public Shoot3(Flywheel flywheel, Kicker kicker1, Kicker kicker2) {
         this.flywheel = flywheel;
@@ -55,7 +55,7 @@ public class Shoot3 {
 
     public boolean update() {
         // Keep flywheel spinning at NEAR speed during the whole sequence
-        flywheel.setVelocity(200); // NEAR_VELOCITY
+                    flywheel.setVelocity(225); // NEAR_VELOCITY
 
         switch (state) {
             case IDLE:
@@ -70,8 +70,11 @@ public class Shoot3 {
 
             case SHOOT_3:
                 kicker2.setServoPos2(K2_FIRE_3);
-                state = State.WAIT_3;
-                timer.reset();
+                if (timer.seconds() >= 0.5) {
+                    kicker2.setServoPos2(K2_INITIAL);
+                    state = State.WAIT_3;
+                    timer.reset();
+                }
                 return true;
 
             case WAIT_3:
@@ -84,22 +87,28 @@ public class Shoot3 {
 
             case SHOOT_2:
                 kicker1.setServoPos1(K1_FIRE_2);
-                kicker2.setServoPos2(K2_FIRE_2);
-                state = State.WAIT_2;
-                timer.reset();
+                if (timer.seconds() >= 0.5) {
+                    kicker2.setServoPos2(K2_FIRE_2);
+                }
+                if (timer.seconds() >= 1.2) {
+                    kicker1.setServoPos1(0.7);
+                    kicker2.setServoPos2(K2_INITIAL);
+                    state = State.WAIT_2;
+                    timer.reset();
+                }
                 return true;
 
             case WAIT_2:
                 if (timer.seconds() >= FEED_WAIT_SECONDS) {
-                    kicker1.setServoPos1(K1_INITIAL);
                     kicker2.setServoPos2(K2_INITIAL);
+                    kicker1.setServoPos1(K1_INITIAL);
                     state = State.SHOOT_1;
                     timer.reset();
                 }
                 return true;
 
             case SHOOT_1:
-                kicker1.setServoPos1(K1_FIRE_1);
+                kicker1.setServoPos1(1);
                 state = State.WAIT_1;
                 timer.reset();
                 return true;

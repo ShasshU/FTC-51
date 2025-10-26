@@ -12,6 +12,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
+import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.Shoot3;
 
 @TeleOp(name = "TestTeleop", group = "TeleOp")
 public class TestTeleop extends LinearOpMode {
@@ -31,6 +32,10 @@ public class TestTeleop extends LinearOpMode {
     private IMU imu;
     double forward, strafe, rotate;
 
+    private Shoot3 scoringSequence;
+
+    private boolean lastDpadDown = false;
+
     @Override
     public void runOpMode() {
         // Hardware mapping
@@ -45,8 +50,12 @@ public class TestTeleop extends LinearOpMode {
         kicker2 = new Kicker(hardwareMap);
 
         // Motor directions (match your working code)
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
+        rightFront.setDirection(DcMotor.Direction.REVERSE);
+
+        scoringSequence = new Shoot3(flywheel, kicker1, kicker2);
 
         // Initialize IMU
         imu = hardwareMap.get(IMU.class, "imu");
@@ -82,7 +91,24 @@ public class TestTeleop extends LinearOpMode {
             // ====== FLYWHEEL CONTROL ======
             flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
 
-            // ====== KICKER LOGIC ======
+            // ===== FLYWHEEL CONTROL =====
+            // Only use manual bumper control if scoring sequence is NOT running
+            if (!scoringSequence.isRunning()) {
+                double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
+                flywheel.setVelocity(targetVelocity);
+            }
+
+            // ===== SCORING SEQUENCE =====
+            if (gamepad1.dpad_down && !lastDpadDown) {
+                scoringSequence.start();
+            }
+            lastDpadDown = gamepad1.dpad_down;
+
+            if (scoringSequence.isRunning()) {
+                scoringSequence.update();
+            }
+
+            // ===== MANUAL KICKER CONTROL =====
             if (gamepad1.dpad_up) {
                 kicker1.setServoPos1(0.85);
                 sleep(1000);
@@ -134,7 +160,7 @@ public class TestTeleop extends LinearOpMode {
     public void driveFieldRelative(double forward, double strafe, double rotate) {
         double heading = imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.RADIANS);
 
-        double theta = Math.atan2(strafe, forward);
+        double theta = Math.atan2(forward, strafe);
         double r = Math.hypot(strafe, forward);
         theta = AngleUnit.normalizeRadians(theta - heading);
 

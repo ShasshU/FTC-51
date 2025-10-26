@@ -43,9 +43,9 @@ public class TeleopRobotOriented extends LinearOpMode {
         kicker2 = new Kicker(hardwareMap);
 
         // Motor directions — these match your working drive config
-        rightBack.setDirection(DcMotor.Direction.FORWARD);
-        leftFront.setDirection(DcMotor.Direction.REVERSE);
-        leftBack.setDirection(DcMotor.Direction.REVERSE);
+        rightBack.setDirection(DcMotor.Direction.REVERSE);
+        leftFront.setDirection(DcMotor.Direction.FORWARD);
+        leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
 
         scoringSequence = new Shoot3(flywheel, kicker1, kicker2);
