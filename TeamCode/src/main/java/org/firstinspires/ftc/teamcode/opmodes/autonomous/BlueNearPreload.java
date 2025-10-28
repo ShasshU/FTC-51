@@ -11,7 +11,7 @@ import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
-import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.Shoot3;
+import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.CloseShot;
 
 @Autonomous()
 public class BlueNearPreload extends LinearOpMode {
@@ -19,7 +19,7 @@ public class BlueNearPreload extends LinearOpMode {
     private MecanumDrive drive;
     private Flywheel flywheel;
     private Kicker kicker1, kicker2;
-    private Shoot3 scoringSequence;
+    private CloseShot scoringSequence;
     private IMU imu;
 
     @Override
@@ -33,7 +33,7 @@ public class BlueNearPreload extends LinearOpMode {
         kicker1.setServoPos1(0.3);
         kicker2.setServoPos2(0.5);
 
-        scoringSequence = new Shoot3(flywheel, kicker1, kicker2);
+        scoringSequence = new CloseShot(flywheel, kicker1, kicker2);
 
         // ===== INIT DRIVE =====
         Pose2d startPose = new Pose2d(-55, -55, Math.toRadians(225));

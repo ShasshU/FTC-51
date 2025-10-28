@@ -12,7 +12,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
-import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.Shoot3;
+import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.CloseShot;
+import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.FarShot;
 
 @TeleOp(name = "TestTeleop", group = "TeleOp")
 public class TestTeleop extends LinearOpMode {
@@ -32,7 +33,9 @@ public class TestTeleop extends LinearOpMode {
     private IMU imu;
     double forward, strafe, rotate;
 
-    private Shoot3 scoringSequence;
+    private CloseShot scoringSequenceClose;
+
+    private FarShot scoringSequenceFar;
 
     private boolean lastDpadDown = false;
 
@@ -55,7 +58,8 @@ public class TestTeleop extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
 
-        scoringSequence = new Shoot3(flywheel, kicker1, kicker2);
+        scoringSequenceClose = new CloseShot(flywheel, kicker1, kicker2);
+        scoringSequenceFar = new FarShot(flywheel, kicker1, kicker2);
 
         // Initialize IMU
         imu = hardwareMap.get(IMU.class, "imu");
@@ -64,7 +68,7 @@ public class TestTeleop extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP
         );
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
-
+        
         // Initialize servos
         kicker1.setServoPos1(0.3);
         kicker2.setServoPos2(0.5);
@@ -93,19 +97,34 @@ public class TestTeleop extends LinearOpMode {
 
             // ===== FLYWHEEL CONTROL =====
             // Only use manual bumper control if scoring sequence is NOT running
-            if (!scoringSequence.isRunning()) {
+            if (!scoringSequenceClose.isRunning()) {
                 double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
                 flywheel.setVelocity(targetVelocity);
             }
 
             // ===== SCORING SEQUENCE =====
             if (gamepad1.dpad_down && !lastDpadDown) {
-                scoringSequence.start();
+                scoringSequenceClose.start();
             }
             lastDpadDown = gamepad1.dpad_down;
 
-            if (scoringSequence.isRunning()) {
-                scoringSequence.update();
+            if (scoringSequenceClose.isRunning()) {
+                scoringSequenceClose.update();
+            }
+
+            if (!scoringSequenceFar.isRunning()) {
+                double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
+                flywheel.setVelocity(targetVelocity);
+            }
+
+            // ===== SCORING SEQUENCE =====
+            if (gamepad1.dpad_down && !lastDpadDown) {
+                scoringSequenceFar.start();
+            }
+            lastDpadDown = gamepad1.dpad_down;
+
+            if (scoringSequenceFar.isRunning()) {
+                scoringSequenceFar.update();
             }
 
             // ===== MANUAL KICKER CONTROL =====
@@ -130,7 +149,7 @@ public class TestTeleop extends LinearOpMode {
                 kicker1.setServoPos1(0.3);
             }
 
-            if (gamepad1.left_bumper) {
+            if (gamepad1.back) {
                 imu.resetYaw();
             }
 

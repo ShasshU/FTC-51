@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
-import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.Shoot3;
+import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.CloseShot;
 
 @TeleOp(name="TeleopRobotOriented", group="TeleOp")
 public class TeleopRobotOriented extends LinearOpMode {
@@ -27,7 +27,7 @@ public class TeleopRobotOriented extends LinearOpMode {
     private boolean lastDpadDown = false;
 
     double forward, strafe, rotate;
-    private Shoot3 scoringSequence;
+    private CloseShot scoringSequence;
 
     @Override
     public void runOpMode() {
@@ -48,7 +48,7 @@ public class TeleopRobotOriented extends LinearOpMode {
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
 
-        scoringSequence = new Shoot3(flywheel, kicker1, kicker2);
+        scoringSequence = new CloseShot(flywheel, kicker1, kicker2);
 
         // Initialize servos
         kicker1.setServoPos1(0.3);

@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 
-public class Shoot3 {
+public class CloseShot {
     private final Flywheel flywheel;
     private final Kicker kicker1;
     private final Kicker kicker2;
@@ -37,7 +37,7 @@ public class Shoot3 {
     private final double SPIN_UP_SECONDS = 1.5;
     private final double FEED_WAIT_SECONDS = 1.5;
 
-    public Shoot3(Flywheel flywheel, Kicker kicker1, Kicker kicker2) {
+    public CloseShot(Flywheel flywheel, Kicker kicker1, Kicker kicker2) {
         this.flywheel = flywheel;
         this.kicker1 = kicker1;
         this.kicker2 = kicker2;
@@ -55,7 +55,7 @@ public class Shoot3 {
 
     public boolean update() {
         // Keep flywheel spinning at NEAR speed during the whole sequence
-                    flywheel.setVelocity(225); // NEAR_VELOCITY
+                    flywheel.setVelocity(200); // NEAR_VELOCITY
 
         switch (state) {
             case IDLE:
@@ -109,6 +109,9 @@ public class Shoot3 {
 
             case SHOOT_1:
                 kicker1.setServoPos1(1);
+                if (timer.seconds() >= 1.2) {
+                    kicker2.setServoPos1(0.9);
+                }
                 state = State.WAIT_1;
                 timer.reset();
                 return true;
