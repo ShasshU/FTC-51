@@ -28,7 +28,6 @@ public class TestTeleop extends LinearOpMode {
 
     // State variables
     private boolean lastA = false;
-    private boolean lastRB = false;
 
     private IMU imu;
     double forward, strafe, rotate;
@@ -37,7 +36,9 @@ public class TestTeleop extends LinearOpMode {
 
     private FarShot scoringSequenceFar;
 
-    private boolean lastDpadDown = false;
+    private boolean lastLeftBumper = false;
+
+    private boolean lastRightBumper = false;
 
     @Override
     public void runOpMode() {
@@ -68,7 +69,7 @@ public class TestTeleop extends LinearOpMode {
                 RevHubOrientationOnRobot.UsbFacingDirection.UP
         );
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
-        
+
         // Initialize servos
         kicker1.setServoPos1(0.3);
         kicker2.setServoPos2(0.5);
@@ -84,13 +85,15 @@ public class TestTeleop extends LinearOpMode {
             strafe = gamepad1.left_stick_x;
             rotate = gamepad1.right_stick_x;
 
-            driveFieldRelative(forward, strafe, rotate);
+            driveFieldRelative(forward, 0.5*strafe, rotate);
 
             // ====== INTAKE TOGGLE ======
-            if (gamepad1.a && !lastA) {
+            if (gamepad1.right_trigger > 0.1) {
                 intake.toggleIntake();
             }
-            lastA = gamepad1.a;
+            else{
+                intake.setPower(0);
+            }
 
             // ====== FLYWHEEL CONTROL ======
             flywheel.setVelocity(gamepad1.right_bumper ? 250 : 0);
@@ -103,10 +106,10 @@ public class TestTeleop extends LinearOpMode {
             }
 
             // ===== SCORING SEQUENCE =====
-            if (gamepad1.dpad_down && !lastDpadDown) {
+            if (gamepad1.left_bumper && !lastLeftBumper) {
                 scoringSequenceClose.start();
             }
-            lastDpadDown = gamepad1.dpad_down;
+            lastLeftBumper = gamepad1.left_bumper;
 
             if (scoringSequenceClose.isRunning()) {
                 scoringSequenceClose.update();
@@ -117,15 +120,30 @@ public class TestTeleop extends LinearOpMode {
                 flywheel.setVelocity(targetVelocity);
             }
 
-            // ===== SCORING SEQUENCE =====
-            if (gamepad1.dpad_down && !lastDpadDown) {
+            if (gamepad1.right_bumper && !lastRightBumper) {
                 scoringSequenceFar.start();
             }
-            lastDpadDown = gamepad1.dpad_down;
+            lastRightBumper = gamepad1.right_bumper;
 
             if (scoringSequenceFar.isRunning()) {
                 scoringSequenceFar.update();
             }
+
+            if (!scoringSequenceFar.isRunning()) {
+                double targetVelocity = flywheel.findFlyWheelVelocity(gamepad1);
+                flywheel.setVelocity(targetVelocity);
+            }
+
+
+
+            // ===== SCORING SEQUENCE =====
+            if (gamepad1.left_trigger > 0.1) {
+                intake.toggleOuttake();
+            }
+            else {
+                intake.setPower(0);
+            }
+
 
             // ===== MANUAL KICKER CONTROL =====
             if (gamepad1.dpad_up) {
@@ -151,6 +169,10 @@ public class TestTeleop extends LinearOpMode {
 
             if (gamepad1.back) {
                 imu.resetYaw();
+            }
+
+            if (gamepad1.b) {
+                flywheel.setVelocity(0);
             }
 
             telemetry.addData("Yaw (deg)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));

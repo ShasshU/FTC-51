@@ -13,8 +13,10 @@ public class Intake {
 
     // Toggle the intake on/off when called
     public void toggleIntake(){
-        intakeOn = !intakeOn;
-        intake.setPower(intakeOn ? 0.7 : 0);
+        intake.setPower(0.9);
+    }
+    public void toggleOuttake() {
+        intake.setPower(-0.7);
     }
 
     // Directly set intake power if needed

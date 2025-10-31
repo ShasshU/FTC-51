@@ -55,7 +55,7 @@ public class CloseShot {
 
     public boolean update() {
         // Keep flywheel spinning at NEAR speed during the whole sequence
-                    flywheel.setVelocity(200); // NEAR_VELOCITY
+                    flywheel.setVelocity(190); // NEAR_VELOCITY
 
         switch (state) {
             case IDLE:
@@ -126,9 +126,9 @@ public class CloseShot {
                 return true;
 
             case STOP_FLYWHEEL:
-                if (timer.seconds() >= 0.3) { // optional buffer
+                    flywheel.setVelocity(0);
                     state = State.DONE;
-                }
+
                 return true;
 
             case DONE:
