@@ -59,7 +59,7 @@ public class MecanumFieldOrientedDrive extends LinearOpMode {
             strafe = gamepad1.left_stick_x;
             rotate = gamepad1.right_stick_x;
 
-            driveFieldRelative(forward, 0.5*strafe, rotate);
+            driveFieldRelative(0.7 * forward, 0.5*strafe, 0.4 * rotate);
 
             if (gamepad1.back) {
                 imu.resetYaw();
