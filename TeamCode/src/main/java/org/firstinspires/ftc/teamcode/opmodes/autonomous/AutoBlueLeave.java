@@ -21,10 +21,10 @@ public class AutoBlueLeave extends LinearOpMode {
 
         waitForStart();
 
-        Actions.runBlocking(
-                drive.actionBuilder(new Pose2d(60, 22, 0))
-                        .lineToX(30)
-                        .build());
+//        Actions.runBlocking(
+//                drive.actionBuilder(new Pose2d(60, 22, 0))
+//                        .lineToX(30)
+//                        .build());
 
 
      
