@@ -9,23 +9,25 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
+import org.firstinspires.ftc.teamcode.subsystems.Adjuster;
 import org.firstinspires.ftc.teamcode.subsystems.Flywheel;
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.CloseShot;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringAction.FarShot;
 
-@TeleOp(name = "TestTeleop", group = "TeleOp")
-public class TestTeleop extends LinearOpMode {
+@TeleOp(name = "Meet1TeleOp", group = "TeleOp")
+public class Meet1Teleop extends LinearOpMode {
 
     // Drive motors
     private DcMotor leftFront, rightFront, leftBack, rightBack;
 
     // Subsystems
-    private Flywheel flywheel;
+    private Flywheel flywheel; //out take
     private Intake intake;
-    private Kicker kicker1, kicker2;
+//    private Kicker kicker1, kicker2;
 
+    private Adjuster adjuster;
     // State variables
     private boolean lastA = false;
 
@@ -50,17 +52,18 @@ public class TestTeleop extends LinearOpMode {
 
         flywheel = new Flywheel(hardwareMap);
         intake = new Intake(hardwareMap);
-        kicker1 = new Kicker(hardwareMap);
-        kicker2 = new Kicker(hardwareMap);
+//        kicker1 = new Kicker(hardwareMap);
+//        kicker2 = new Kicker(hardwareMap);
+        adjuster = new Adjuster(hardwareMap);
 
         // Motor directions (match your working code)
         rightBack.setDirection(DcMotor.Direction.REVERSE);
         leftFront.setDirection(DcMotor.Direction.FORWARD);
         leftBack.setDirection(DcMotor.Direction.FORWARD);
         rightFront.setDirection(DcMotor.Direction.REVERSE);
-
-        scoringSequenceClose = new CloseShot(flywheel, kicker1, kicker2);
-        scoringSequenceFar = new FarShot(flywheel, kicker1, kicker2);
+//
+//        scoringSequenceClose = new CloseShot(flywheel, kicker1, kicker2);
+//        scoringSequenceFar = new FarShot(flywheel, kicker1, kicker2);
 
         // Initialize IMU
         imu = hardwareMap.get(IMU.class, "imu");
@@ -71,8 +74,9 @@ public class TestTeleop extends LinearOpMode {
         imu.initialize(new IMU.Parameters(revHubOrientationOnRobot));
 
         // Initialize servos
-        kicker1.setServoPos1(0.3);
-        kicker2.setServoPos2(0.5);
+//        kicker1.setServoPos1(0.3);
+//        kicker2.setServoPos2(0.5);
+        adjuster.setServoPos(0.3);
 
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -146,26 +150,26 @@ public class TestTeleop extends LinearOpMode {
 
 
             // ===== MANUAL KICKER CONTROL =====
-            if (gamepad1.dpad_up) {
-                kicker1.setServoPos1(0.85);
-                sleep(1000);
-                kicker2.setServoPos2(0.9);
-                sleep(1000);
-                kicker1.setServoPos1(0.3);
-                kicker2.setServoPos2(0.5);
-            }
-
-            if (gamepad1.dpad_right) {
-                kicker2.setServoPos2(0.9);
-                sleep(200);
-                kicker2.setServoPos2(0.5);
-            }
-
-            if (gamepad1.dpad_left) {
-                kicker1.setServoPos1(1);
-                sleep(200);
-                kicker1.setServoPos1(0.3);
-            }
+//            if (gamepad1.dpad_up) {
+//                kicker1.setServoPos1(0.85);
+//                sleep(1000);
+//                kicker2.setServoPos2(0.9);
+//                sleep(1000);
+//                kicker1.setServoPos1(0.3);
+//                kicker2.setServoPos2(0.5);
+//            }
+//
+//            if (gamepad1.dpad_right) {
+//                kicker2.setServoPos2(0.9);
+//                sleep(200);
+//                kicker2.setServoPos2(0.5);
+//            }
+//
+//            if (gamepad1.dpad_left) {
+//                kicker1.setServoPos1(1);
+//                sleep(200);
+//                kicker1.setServoPos1(0.3);
+//            }
 
             if (gamepad1.back) {
                 imu.resetYaw();
