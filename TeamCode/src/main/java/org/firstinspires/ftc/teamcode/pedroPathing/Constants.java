@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedroPathing;
 
+import com.pedropathing.control.FilteredPIDFCoefficients;
 import com.pedropathing.control.PIDFCoefficients;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.follower.FollowerConstants;
@@ -17,8 +18,10 @@ public class Constants {
             .mass(9)
             .forwardZeroPowerAcceleration(-24.292909202206538)
             .lateralZeroPowerAcceleration(-43.975112371980764)
-            .translationalPIDFCoefficients(new PIDFCoefficients(0.1,0.0,0.01,0.02));
-//            .headingPIDFCoefficients(new PIDFCoefficients(0.0,0,0,0.03));
+            .translationalPIDFCoefficients(new PIDFCoefficients(0.1,0.0,0.01,0.02))
+            .headingPIDFCoefficients(new PIDFCoefficients(0.75,0,0.01,0.015))
+            .drivePIDFCoefficients(new FilteredPIDFCoefficients(.025, 0, 0.00001, 0.6, 0.01))
+            .centripetalScaling(0.0005);
 
     public static MecanumConstants driveConstants = new MecanumConstants()
             .maxPower(1)
@@ -48,7 +51,10 @@ public class Constants {
             .IMU_HardwareMapName("imu")
             .IMU_Orientation(new RevHubOrientationOnRobot(RevHubOrientationOnRobot.LogoFacingDirection.UP, RevHubOrientationOnRobot.UsbFacingDirection.LEFT));
 
-    public static PathConstraints pathConstraints = new PathConstraints(0.99, 100, 1, 1);
+    public static PathConstraints pathConstraints = new PathConstraints(0.99,
+            100,
+            1.2,
+            1);
 
     public static Follower createFollower(HardwareMap hardwareMap) {
         return new FollowerBuilder(followerConstants, hardwareMap)
