@@ -111,8 +111,6 @@ public class TestTeleop extends OpMode {
 
     @Override
     public void stop() {
-        // Save ending pose for next auto
-        autoEndPose = follower.getPose();
 
         // Turn off all subsystems
         intake.stop();
