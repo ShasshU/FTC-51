@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Opmodes.Autonomous;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -26,7 +27,7 @@ public class BlueClose9Piece extends OpMode {
     private final Pose pickup1Pose = new Pose(13.811, 83.882, Math.toRadians(180));
     private final Pose pickup2IntermediatePose = new Pose(60.000, 60.500, Math.toRadians(180));
     private final Pose pickup2Pose = new Pose(14.827, 60.118, Math.toRadians(180));
-    private final Pose leavePose = new Pose(50.000, 73.500, Math.toRadians(225));
+    private final Pose leavePose = new Pose(9, 72, Math.toRadians(-90));
 
     private PathChain ScorePreload;
     private PathChain Pickup1Part1;
@@ -95,21 +96,21 @@ public class BlueClose9Piece extends OpMode {
                 break;
 
             case 1:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.5) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
                     follower.followPath(Pickup1Part1, true); //goes to pickup part 1
                     setPathState(2);
                 }
                 break;
 
             case 2:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1.0) {
                     follower.followPath(Pickup1Part2, true); //picks up the 3 artifacts
                     setPathState(3);
                 }
                 break;
 
             case 3:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
                     follower.followPath(ScorePickup1, true); //scores the 3 artifiacts
                     setPathState(4);
                 }
@@ -117,14 +118,14 @@ public class BlueClose9Piece extends OpMode {
 
             case 4:
                 // Wait at basket to score sample 1
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.5) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.3) {
                     follower.followPath(Pickup2Part1, true); //goes to pick up another 3 artifacts
                     setPathState(5);
                 }
                 break;
 
             case 5:
-                if (!follower.isBusy()) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1.0) {
                     follower.followPath(Pickup2Part2, true); //intakes 3 artifacts
                     setPathState(6);
                 }
@@ -138,7 +139,7 @@ public class BlueClose9Piece extends OpMode {
                 break;
 
             case 7:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.5) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
                     follower.followPath(Leave, true); //leaves
                     setPathState(8);
                 }
@@ -196,4 +197,5 @@ public class BlueClose9Piece extends OpMode {
     public void stop() {
         autoEndPose = follower.getPose();
     }
+
 }
