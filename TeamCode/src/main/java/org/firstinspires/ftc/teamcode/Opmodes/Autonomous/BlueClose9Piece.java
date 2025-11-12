@@ -27,7 +27,7 @@ public class BlueClose9Piece extends OpMode {
     private final Pose pickup1Pose = new Pose(13.811, 83.882, Math.toRadians(180));
     private final Pose pickup2IntermediatePose = new Pose(60.000, 60.500, Math.toRadians(180));
     private final Pose pickup2Pose = new Pose(14.827, 60.118, Math.toRadians(180));
-    private final Pose leavePose = new Pose(9, 72, Math.toRadians(-90));
+    private final Pose leavePose = new Pose(23, 72, Math.toRadians(-90));
 
     private PathChain ScorePreload;
     private PathChain Pickup1Part1;
@@ -103,7 +103,7 @@ public class BlueClose9Piece extends OpMode {
                 break;
 
             case 2:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1.0) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2.0) {
                     follower.followPath(Pickup1Part2, true); //picks up the 3 artifacts
                     setPathState(3);
                 }
@@ -118,7 +118,7 @@ public class BlueClose9Piece extends OpMode {
 
             case 4:
                 // Wait at basket to score sample 1
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
                     follower.followPath(Pickup2Part1, true); //goes to pick up another 3 artifacts
                     setPathState(5);
                 }
