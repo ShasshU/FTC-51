@@ -15,12 +15,14 @@ import static org.firstinspires.ftc.teamcode.Opmodes.Autonomous.BlueClose9Piece.
 
 @Configurable
 @TeleOp(name = "Main TeleOp")
-public class TestTeleop extends OpMode {
+public class RedTeleop extends OpMode {
 
     // Pedro Pathing
     private static Follower follower;
     public static Pose startingPose;
 
+    public static Pose blueParkPose = new Pose(112, 41, Math.toRadians(90));
+    public static Pose redParkPose = blueParkPose.mirror();
     // Subsystems
     private Intake intake;
     private Shooter shooter;
@@ -110,6 +112,10 @@ public class TestTeleop extends OpMode {
                 } else {
                     shooter.setFarShot();
                 }
+            }
+
+            if (gamepad1.backWasPressed()) {
+                follower.holdPoint(redParkPose);
             }
 
             // ========== SCORING ACTION TRIGGER ==========
