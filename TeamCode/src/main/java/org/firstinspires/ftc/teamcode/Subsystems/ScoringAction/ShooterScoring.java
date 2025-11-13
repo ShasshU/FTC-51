@@ -11,25 +11,27 @@ public class ShooterScoring {
     private ElapsedTime timer;
 
     public enum ScoringState {
-        IDLE,                    // Not scoring
-        REVERSING_SHOOTER,       // Reverse shooter FIRST to pull ball down
-        REVERSING_INTAKE,        // Brief intake reverse to help position ball
-        SPINNING_UP,             // Spin up shooter to target velocity
-        FEEDING,                 // Feed balls into shooter
-        COMPLETE                 // Scoring complete
+        IDLE,
+        REVERSING_SHOOTER,
+        REVERSING_INTAKE,
+        SPINNING_UP,
+        FEEDING_SLOW,
+        FEEDING_FAST,
+        COMPLETE
     }
 
     private ScoringState currentState = ScoringState.IDLE;
 
-    private static final double SHOOTER_REVERSE_DURATION = 0.5;  // Reverse shooter first
-    private static final double INTAKE_REVERSE_DURATION = 0.2;   // Short intake reverse
+    private static final double SHOOTER_REVERSE_DURATION = 0.5;
+    private static final double INTAKE_REVERSE_DURATION = 0.2;
     private static final double SPINUP_DURATION = 0.8;
-    private static final double FEEDING_DURATION = 3.0;
+    private static final double FEEDING_SLOW_DURATION = 2.0;
+    private static final double FEEDING_FAST_DURATION = 1.5;
 
-    // Power/velocity constants
     private static final double INTAKE_REVERSE_POWER = -0.05;
-    private static final double SHOOTER_REVERSE_VELOCITY = -500;  // Moderate reverse speed
-    private static final double FEEDING_POWER = 1.0;
+    private static final double SHOOTER_REVERSE_VELOCITY = -500;
+    private static final double FEEDING_SLOW_POWER = 0.5;
+    private static final double FEEDING_FAST_POWER = 1.0;
 
     public ShooterScoring(Intake intake, Shooter shooter) {
         this.intake = intake;
@@ -50,55 +52,54 @@ public class ShooterScoring {
                 break;
 
             case REVERSING_SHOOTER:
-                // Reverse ONLY the shooter first to pull initial ball down
-                intake.stop();  // Keep intake stopped
+                intake.stop();
                 shooter.setVelocity(SHOOTER_REVERSE_VELOCITY);
 
                 if (timer.seconds() >= SHOOTER_REVERSE_DURATION) {
-                    // Move to brief intake reverse
                     currentState = ScoringState.REVERSING_INTAKE;
                     timer.reset();
                 }
                 break;
 
             case REVERSING_INTAKE:
-                // Brief intake reverse while shooter continues reversing
                 intake.setPower(INTAKE_REVERSE_POWER);
-                shooter.setVelocity(SHOOTER_REVERSE_VELOCITY);  // Keep shooter reversing
+                shooter.setVelocity(SHOOTER_REVERSE_VELOCITY);
 
                 if (timer.seconds() >= INTAKE_REVERSE_DURATION) {
-                    // Move to spinning up phase
                     currentState = ScoringState.SPINNING_UP;
                     timer.reset();
                 }
                 break;
 
             case SPINNING_UP:
-                // Stop intake, set shooter to NEAR shot and let it spin up
                 intake.stop();
-                shooter.setNearShot();  // Set NEAR shot velocity
+                shooter.setNearShot();
 
                 if (timer.seconds() >= SPINUP_DURATION) {
-                    // Move to feeding phase
-                    currentState = ScoringState.FEEDING;
+                    currentState = ScoringState.FEEDING_SLOW;
                     timer.reset();
                 }
                 break;
 
-            case FEEDING:
-                // Feed balls into shooter at max speed
-                intake.setPower(FEEDING_POWER);
-                // Shooter continues running at target velocity
+            case FEEDING_SLOW:
+                intake.setPower(FEEDING_SLOW_POWER);
 
-                if (timer.seconds() >= FEEDING_DURATION) {
-                    // Scoring complete
+                if (timer.seconds() >= FEEDING_SLOW_DURATION) {
+                    currentState = ScoringState.FEEDING_FAST;
+                    timer.reset();
+                }
+                break;
+
+            case FEEDING_FAST:
+                intake.setPower(FEEDING_FAST_POWER);
+
+                if (timer.seconds() >= FEEDING_FAST_DURATION) {
                     currentState = ScoringState.COMPLETE;
                     stopScoring();
                 }
                 break;
 
             case COMPLETE:
-                // Scoring finished, return to idle
                 currentState = ScoringState.IDLE;
                 break;
         }
