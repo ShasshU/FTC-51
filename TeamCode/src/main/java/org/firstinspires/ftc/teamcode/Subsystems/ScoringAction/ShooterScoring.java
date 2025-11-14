@@ -13,7 +13,6 @@ public class ShooterScoring {
     public enum ScoringState {
         IDLE,
         REVERSING_SHOOTER,
-        REVERSING_INTAKE,
         SPINNING_UP,
         FEEDING_SLOW,
         FEEDING_FAST,
@@ -22,14 +21,12 @@ public class ShooterScoring {
 
     private ScoringState currentState = ScoringState.IDLE;
 
-    private static final double SHOOTER_REVERSE_DURATION = 0.5;
-    private static final double INTAKE_REVERSE_DURATION = 0.2;
+    private static final double SHOOTER_REVERSE_DURATION = 0.15;  // Very brief reverse
     private static final double SPINUP_DURATION = 0.8;
     private static final double FEEDING_SLOW_DURATION = 2.0;
     private static final double FEEDING_FAST_DURATION = 1.5;
 
-    private static final double INTAKE_REVERSE_POWER = -0.05;
-    private static final double SHOOTER_REVERSE_VELOCITY = -500;
+    private static final double SHOOTER_REVERSE_VELOCITY = -100;  // Very slight reverse
     private static final double FEEDING_SLOW_POWER = 0.5;
     private static final double FEEDING_FAST_POWER = 1.0;
 
@@ -56,16 +53,6 @@ public class ShooterScoring {
                 shooter.setVelocity(SHOOTER_REVERSE_VELOCITY);
 
                 if (timer.seconds() >= SHOOTER_REVERSE_DURATION) {
-                    currentState = ScoringState.REVERSING_INTAKE;
-                    timer.reset();
-                }
-                break;
-
-            case REVERSING_INTAKE:
-                intake.setPower(INTAKE_REVERSE_POWER);
-                shooter.setVelocity(SHOOTER_REVERSE_VELOCITY);
-
-                if (timer.seconds() >= INTAKE_REVERSE_DURATION) {
                     currentState = ScoringState.SPINNING_UP;
                     timer.reset();
                 }

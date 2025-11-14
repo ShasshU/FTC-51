@@ -21,8 +21,8 @@ public class RedTeleop extends OpMode {
     private static Follower follower;
     public static Pose startingPose;
 
-    public static Pose blueParkPose = new Pose(112, 41, Math.toRadians(90));
-    public static Pose redParkPose = blueParkPose.mirror();
+    public static Pose parkPose = new Pose(38, 33, Math.toRadians(90));
+
     // Subsystems
     private Intake intake;
     private Shooter shooter;
@@ -79,6 +79,12 @@ public class RedTeleop extends OpMode {
             slowMode = !slowMode;
         }
 
+        // ========== EMERGENCY STOP DURING SCORING ==========
+        // A button = Emergency stop scoring (works anytime)
+        if (gamepad1.aWasPressed()) {
+            scoringAction.stopScoring();
+        }
+
         // ========== MANUAL CONTROL (only when not scoring) ==========
         if (!scoringAction.isScoring()) {
             // ========== INTAKE CONTROL ==========
@@ -96,7 +102,7 @@ public class RedTeleop extends OpMode {
             }
 
             // ========== SHOOTER PRESET CONTROL ==========
-            // Right bumper = Near shot (toggle)
+            // Right bumper = Near shot (press once to toggle on/off)
             if (gamepad1.right_bumper) {
                 if (shooter.getCurrentShotMode() == Shooter.ShotMode.NEAR) {
                     shooter.turnOff();
@@ -105,7 +111,7 @@ public class RedTeleop extends OpMode {
                 }
             }
 
-            // Left bumper = Far shot (toggle)
+            // Left bumper = Far shot (press once to toggle on/off)
             if (gamepad1.left_bumper) {
                 if (shooter.getCurrentShotMode() == Shooter.ShotMode.FAR) {
                     shooter.turnOff();
@@ -114,20 +120,27 @@ public class RedTeleop extends OpMode {
                 }
             }
 
+            // Y button = Manual stop shooter
+            if (gamepad1.yWasPressed()) {
+                shooter.turnOff();
+            }
+
+            // X button = Manual reverse shooter (hold to reverse)
+            if (gamepad1.x) {
+                shooter.setVelocity(-100);  // Slight reverse
+            } else if (gamepad1.xWasReleased()) {
+                shooter.turnOff();
+            }
+
+            // Back button = Auto drive to park
             if (gamepad1.backWasPressed()) {
-                follower.holdPoint(redParkPose);
+                follower.holdPoint(parkPose);
             }
 
             // ========== SCORING ACTION TRIGGER ==========
             // B button = Start scoring sequence (always uses NEAR shot)
             if (gamepad1.bWasPressed()) {
                 scoringAction.startScoring();
-            }
-        } else {
-            // ========== EMERGENCY STOP DURING SCORING ==========
-            // A button = Emergency stop scoring
-            if (gamepad1.aWasPressed()) {
-                scoringAction.stopScoring();
             }
         }
 
@@ -145,10 +158,13 @@ public class RedTeleop extends OpMode {
         telemetry.addLine("Right Stick Button: Toggle Slow Mode");
         telemetry.addLine("Right Trigger: Intake");
         telemetry.addLine("Left Trigger: Outtake");
-        telemetry.addLine("Right Bumper: Near Shot");
-        telemetry.addLine("Left Bumper: Far Shot");
+        telemetry.addLine("Right Bumper: Toggle Near Shot");
+        telemetry.addLine("Left Bumper: Toggle Far Shot");
+        telemetry.addLine("Y Button: Stop Shooter");
+        telemetry.addLine("X Button: Reverse Shooter (hold)");
         telemetry.addLine("B Button: START SCORING (NEAR)");
         telemetry.addLine("A Button: STOP SCORING");
+        telemetry.addLine("Back Button: Auto Park");
         telemetry.update();
     }
 

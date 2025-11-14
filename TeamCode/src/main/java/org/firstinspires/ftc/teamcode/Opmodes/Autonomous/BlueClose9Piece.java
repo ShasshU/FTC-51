@@ -8,6 +8,10 @@ import com.pedropathing.geometry.BezierLine;
 import com.pedropathing.paths.PathChain;
 import com.pedropathing.util.Timer;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.ScoringAction.ShooterScoring;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+
 
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
