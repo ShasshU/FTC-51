@@ -7,14 +7,13 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Subsystems.Intake;
-import org.firstinspires.ftc.teamcode.Subsystems.ScoringAction.ShooterScoring;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static org.firstinspires.ftc.teamcode.Opmodes.Autonomous.BlueClose9Piece.autoEndPose;
 
 
 @Configurable
-@TeleOp(name = "Main TeleOp")
+@TeleOp(name = "Blue TeleOp", group = "TeleOp")
 public class BlueTeleop extends OpMode {
 
     // Pedro Pathing
@@ -22,17 +21,16 @@ public class BlueTeleop extends OpMode {
     public static Pose startingPose;
 
     public static Pose parkPose = new Pose(105, 38, Math.toRadians(90));
+    public static Pose resetPose = new Pose(72, 72, Math.toRadians(90));
 
     // Subsystems
     private Intake intake;
     private Shooter shooter;
 
-    // Actions
-    private ShooterScoring scoringAction;
-
     // Slow mode
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
+    private double turningMultiplier = 0.4;  // Reduce turning speed to 60%
 
     @Override
     public void init() {
@@ -44,9 +42,6 @@ public class BlueTeleop extends OpMode {
         // Initialize subsystems
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
-
-        // Initialize scoring action
-        scoringAction = new ShooterScoring(intake, shooter);
 
         telemetry.addLine("TeleOp Initialized!");
         telemetry.update();
@@ -61,7 +56,6 @@ public class BlueTeleop extends OpMode {
     public void loop() {
         // ========== UPDATE ALL SYSTEMS ==========
         follower.update();
-        scoringAction.update();  // Always update scoring action state machine
 
         // ========== DRIVETRAIN CONTROL ==========
         double speedMultiplier = slowMode ? slowModeMultiplier : 1.0;
@@ -69,8 +63,8 @@ public class BlueTeleop extends OpMode {
         follower.setTeleOpDrive(
                 -gamepad1.left_stick_y * speedMultiplier,
                 -gamepad1.left_stick_x * speedMultiplier,
-                -gamepad1.right_stick_x * speedMultiplier,
-                false
+                -gamepad1.right_stick_x * speedMultiplier * turningMultiplier, // Reduced turning speed
+                true
         );
 
         // ========== SLOW MODE CONTROL ==========
@@ -79,91 +73,75 @@ public class BlueTeleop extends OpMode {
             slowMode = !slowMode;
         }
 
-        // ========== EMERGENCY STOP DURING SCORING ==========
-        // A button = Emergency stop scoring (works anytime)
-        if (gamepad1.aWasPressed()) {
-            scoringAction.stopScoring();
+        // ========== RESET POSE ==========
+        // Left stick button = Reset pose to known position
+        if (gamepad1.leftStickButtonWasPressed()) {
+            follower.setPose(resetPose);
         }
 
-        // ========== MANUAL CONTROL (only when not scoring) ==========
-        if (!scoringAction.isScoring()) {
-            // ========== INTAKE CONTROL ==========
-            // Right trigger = Toggle intake on/off
-            if (gamepad1.right_trigger > 0.5) {
-                intake.startIntake();
-            }
-            // Left trigger = Outtake (reverse)
-            else if (gamepad1.left_trigger > 0.5) {
-                intake.startOuttake();
-            }
-            // No triggers = Stop intake
-            else {
-                intake.stop();
-            }
+        // ========== INTAKE CONTROL ==========
+        // Right trigger = Intake
+        if (gamepad1.right_trigger > 0.5) {
+            intake.startIntake();
+        }
+        // Left trigger = Outtake (reverse)
+        else if (gamepad1.left_trigger > 0.5) {
+            intake.startOuttake();
+        }
+        // No triggers = Stop intake
+        else {
+            intake.stop();
+        }
 
-            // ========== SHOOTER PRESET CONTROL ==========
-            // Right bumper = Near shot (press once to toggle on/off)
-            if (gamepad1.right_bumper) {
-                if (shooter.getCurrentShotMode() == Shooter.ShotMode.NEAR) {
-                    shooter.turnOff();
-                } else {
-                    shooter.setNearShot();
-                }
-            }
-
-            // Left bumper = Far shot (press once to toggle on/off)
-            if (gamepad1.left_bumper) {
-                if (shooter.getCurrentShotMode() == Shooter.ShotMode.FAR) {
-                    shooter.turnOff();
-                } else {
-                    shooter.setFarShot();
-                }
-            }
-
-            // Y button = Manual stop shooter
-            if (gamepad1.yWasPressed()) {
+        // ========== SHOOTER PRESET CONTROL ==========
+        // Right bumper = Near shot (press once to toggle on/off)
+        if (gamepad1.right_bumper) {
+            if (shooter.getCurrentShotMode() == Shooter.ShotMode.NEAR) {
                 shooter.turnOff();
+            } else {
+                shooter.setNearShot();
             }
+        }
 
-            // X button = Manual reverse shooter (hold to reverse)
-            if (gamepad1.x) {
-                shooter.setVelocity(-100);  // Slight reverse
-            } else if (gamepad1.xWasReleased()) {
+        // Left bumper = Far shot (press once to toggle on/off)
+        if (gamepad1.left_bumper) {
+            if (shooter.getCurrentShotMode() == Shooter.ShotMode.FAR) {
                 shooter.turnOff();
+            } else {
+                shooter.setFarShot();
             }
+        }
 
-            // Back button = Auto drive to park
-            if (gamepad1.backWasPressed()) {
-                follower.holdPoint(parkPose);
-            }
+        // Y button = Manual stop shooter
+        if (gamepad1.yWasPressed()) {
+            shooter.turnOff();
+        }
 
-            // ========== SCORING ACTION TRIGGER ==========
-            // B button = Start scoring sequence (always uses NEAR shot)
-            if (gamepad1.bWasPressed()) {
-                scoringAction.startScoring();
-            }
+        // Back button = Auto drive to park
+        if (gamepad1.backWasPressed()) {
+            follower.holdPoint(parkPose);
         }
 
         // ========== TELEMETRY ==========
         telemetry.addData("Slow Mode", slowMode);
+        telemetry.addData("X", "%.1f", follower.getPose().getX());
+        telemetry.addData("Y", "%.1f", follower.getPose().getY());
+        telemetry.addData("Heading", "%.1f°", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.addData("Intake State", intake.getState());
         telemetry.addData("Shooter Mode", shooter.getCurrentShotMode());
         telemetry.addData("Shooter Velocity", "%.0f ticks/sec", shooter.getCurrentVelocity());
-        telemetry.addData("Scoring State", scoringAction.getCurrentState());
-        telemetry.addData("State Time", "%.2f sec", scoringAction.getStateTime());
         telemetry.addLine();
         telemetry.addLine("=== CONTROLS ===");
         telemetry.addLine("Left Stick: Drive");
-        telemetry.addLine("Right Stick X: Turn");
+        telemetry.addLine("Right Stick X: Turn (60% speed)");
         telemetry.addLine("Right Stick Button: Toggle Slow Mode");
+        telemetry.addLine("Left Stick Button: RESET POSE");
         telemetry.addLine("Right Trigger: Intake");
         telemetry.addLine("Left Trigger: Outtake");
         telemetry.addLine("Right Bumper: Toggle Near Shot");
         telemetry.addLine("Left Bumper: Toggle Far Shot");
         telemetry.addLine("Y Button: Stop Shooter");
         telemetry.addLine("X Button: Reverse Shooter (hold)");
-        telemetry.addLine("B Button: START SCORING (NEAR)");
-        telemetry.addLine("A Button: STOP SCORING");
         telemetry.addLine("Back Button: Auto Park");
         telemetry.update();
     }
@@ -172,6 +150,5 @@ public class BlueTeleop extends OpMode {
     public void stop() {
         intake.stop();
         shooter.turnOff();
-        scoringAction.stopScoring();
     }
 }

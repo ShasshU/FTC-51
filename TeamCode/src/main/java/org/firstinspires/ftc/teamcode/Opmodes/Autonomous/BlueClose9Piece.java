@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.Opmodes.Autonomous;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.geometry.Pose;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
@@ -12,8 +11,6 @@ import org.firstinspires.ftc.teamcode.Subsystems.Intake;
 import org.firstinspires.ftc.teamcode.Subsystems.ScoringAction.ShooterScoring;
 import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
 
-
-
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Autonomous(name = "BlueClose9Piece", group = "Autonomous")
@@ -24,6 +21,10 @@ public class BlueClose9Piece extends OpMode {
 
     private Timer pathTimer, opmodeTimer;
     private int pathState;
+
+    private Intake intake;
+    private Shooter shooter;
+    private ShooterScoring shooterScoring;
 
     private final Pose startPose = new Pose(36.355, 135.673, Math.toRadians(90));
     private final Pose scorePose = new Pose(59.915, 83.882, Math.toRadians(135));
@@ -95,61 +96,85 @@ public class BlueClose9Piece extends OpMode {
     public void autonomousPathUpdate() {
         switch (pathState) {
             case 0:
-                follower.followPath(ScorePreload); //scoring preload
+                follower.followPath(ScorePreload);
                 setPathState(1);
                 break;
 
             case 1:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
-                    follower.followPath(Pickup1Part1, true); //goes to pickup part 1
+                if (!follower.isBusy()) {
+                    shooterScoring.startScoring();
                     setPathState(2);
                 }
                 break;
 
             case 2:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2.0) {
-                    follower.followPath(Pickup1Part2, true); //picks up the 3 artifacts
+                if (!shooterScoring.isScoring() && pathTimer.getElapsedTimeSeconds() > 0.5) {
+                    follower.followPath(Pickup1Part1, true);
                     setPathState(3);
                 }
                 break;
 
             case 3:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
-                    follower.followPath(ScorePickup1, true); //scores the 3 artifiacts
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                    follower.followPath(Pickup1Part2, true);
+                    intake.startIntake();
                     setPathState(4);
                 }
                 break;
 
             case 4:
-                // Wait at basket to score sample 1
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 2) {
-                    follower.followPath(Pickup2Part1, true); //goes to pick up another 3 artifacts
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
+                    intake.stop();
+                    follower.followPath(ScorePickup1, true);
                     setPathState(5);
                 }
                 break;
 
             case 5:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 1.0) {
-                    follower.followPath(Pickup2Part2, true); //intakes 3 artifacts
+                if (!follower.isBusy()) {
+                    shooterScoring.startScoring();
                     setPathState(6);
                 }
                 break;
 
             case 6:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.3) {
-                    follower.followPath(ScorePickup2, true); //goes to score 3 artifacts
+                if (!shooterScoring.isScoring() && pathTimer.getElapsedTimeSeconds() > 0.5) {
+                    follower.followPath(Pickup2Part1, true);
                     setPathState(7);
                 }
                 break;
 
             case 7:
-                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
-                    follower.followPath(Leave, true); //leaves
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 0.3) {
+                    follower.followPath(Pickup2Part2, true);
+                    intake.startIntake();
                     setPathState(8);
                 }
                 break;
 
             case 8:
+                if (!follower.isBusy() && pathTimer.getElapsedTimeSeconds() > 3.0) {
+                    intake.stop();
+                    follower.followPath(ScorePickup2, true);
+                    setPathState(9);
+                }
+                break;
+
+            case 9:
+                if (!follower.isBusy()) {
+                    shooterScoring.startScoring();
+                    setPathState(10);
+                }
+                break;
+
+            case 10:
+                if (!shooterScoring.isScoring() && pathTimer.getElapsedTimeSeconds() > 0.5) {
+                    follower.followPath(Leave, true);
+                    setPathState(11);
+                }
+                break;
+
+            case 11:
                 if (!follower.isBusy()) {
                     setPathState(-1);
                 }
@@ -171,6 +196,10 @@ public class BlueClose9Piece extends OpMode {
         opmodeTimer = new Timer();
 
         follower = Constants.createFollower(hardwareMap);
+        intake = new Intake(hardwareMap);
+        shooter = new Shooter(hardwareMap);
+        shooterScoring = new ShooterScoring(intake, shooter);
+
         buildPaths();
         follower.setStartingPose(startPose);
 
@@ -187,9 +216,11 @@ public class BlueClose9Piece extends OpMode {
 
     public void loop() {
         follower.update();
+        shooterScoring.update();
         autonomousPathUpdate();
 
         telemetry.addData("Path State", pathState);
+        telemetry.addData("Scoring Active", shooterScoring.isScoring());
         telemetry.addData("Time", "%.1f sec", opmodeTimer.getElapsedTimeSeconds());
         telemetry.addData("X", "%.1f", follower.getPose().getX());
         telemetry.addData("Y", "%.1f", follower.getPose().getY());
@@ -200,6 +231,7 @@ public class BlueClose9Piece extends OpMode {
 
     public void stop() {
         autoEndPose = follower.getPose();
+        intake.stop();
+        shooter.turnOff();
     }
-
 }
