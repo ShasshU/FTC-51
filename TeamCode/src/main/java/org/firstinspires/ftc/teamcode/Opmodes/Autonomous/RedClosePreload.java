@@ -25,8 +25,8 @@ public class RedClosePreload extends OpMode {
     private Shooter shooter;
 
     // Blue Alliance poses (original)
-    private final Pose blueStartPose = new Pose(36.355, 135.673, Math.toRadians(90));
-    private final Pose blueScorePose = new Pose(59.915, 83.882, Math.toRadians(135));
+    private final Pose blueStartPose = new Pose(21.7, 125.3, Math.toRadians(135));
+    private final Pose blueScorePose = new Pose(59.915, 83.882, Math.toRadians(130));
     private final Pose blueLeavePose = new Pose(23, 72, Math.toRadians(-90));
 
     // Red Alliance poses (mirrored)

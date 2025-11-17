@@ -19,7 +19,7 @@ public class Shooter {
     private ShotMode currentShotMode = ShotMode.OFF;
 
 
-    private static final double NEAR_VELOCITY = 190;    //1400
+    private static final double NEAR_VELOCITY = 185;    //190
     private static final double FAR_VELOCITY = 220;     //unsure
     private static final double OFF_VELOCITY = 0.0;
 

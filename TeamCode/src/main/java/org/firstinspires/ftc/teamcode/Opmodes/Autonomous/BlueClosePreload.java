@@ -24,8 +24,8 @@ public class BlueClosePreload extends OpMode {
     private Intake intake;
     private Shooter shooter;
 
-    private final Pose startPose = new Pose(36.355, 135.673, Math.toRadians(90));
-    private final Pose scorePose = new Pose(59.915, 83.882, Math.toRadians(135));
+    private final Pose startPose = new Pose(21.7, 125.3, Math.toRadians(135));
+    private final Pose scorePose = new Pose(59.915, 83.882, Math.toRadians(130));
     private final Pose leavePose = new Pose(23, 72, Math.toRadians(-90));
 
     private PathChain ScorePreload;
