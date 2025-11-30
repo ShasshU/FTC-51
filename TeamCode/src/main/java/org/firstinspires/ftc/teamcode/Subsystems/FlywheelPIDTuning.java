@@ -13,10 +13,10 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 public class FlywheelPIDTuning extends OpMode {
 
     public static double TARGET_VELOCITY = 185;
-    public static double Kp = 0;
+    public static double Kp = 100;
     public static double Ki = 0;
     public static double Kd = 0;
-    public static double Kf = 12;
+    public static double Kf = 0.1;
 
     private DcMotorEx shooter;
     private boolean motorRunning = false;
