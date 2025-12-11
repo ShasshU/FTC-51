@@ -17,8 +17,8 @@ import org.firstinspires.ftc.teamcode.subsystems.ScoringAction;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
 @Configurable
-@Autonomous(name = "BlueClose9Piece", group = "Autonomous")
-public class BlueClose9Piece extends OpMode {
+@Autonomous(name = "RedClose9Piece", group = "Autonomous")
+public class RedClose9Piece extends OpMode {
 
     private TelemetryManager panelsTelemetry;
     public Follower follower;
@@ -29,10 +29,10 @@ public class BlueClose9Piece extends OpMode {
     private Intake intake;
     private Shooter shooter;
     private Kicker kicker;
-    private ScoringAction kickerScoring;
+    private ScoringAction scoringAction;
 
-    // Starting pose
-    private static final Pose startPose = new Pose(36.355, 135.673, Math.toRadians(90));
+    // Starting pose - RED ALLIANCE (mirrored from blue)
+    private static final Pose startPose = new Pose(107.645, 135.673, Math.toRadians(90));
 
     // Store end pose for teleop continuity
     public static Pose autoEndPose = null;
@@ -49,7 +49,7 @@ public class BlueClose9Piece extends OpMode {
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
         kicker = new Kicker(hardwareMap);
-        kickerScoring = new ScoringAction(intake, shooter, kicker);
+        scoringAction = new ScoringAction(intake, shooter, kicker);
 
         // Build paths
         paths = new Paths(follower);
@@ -67,12 +67,12 @@ public class BlueClose9Piece extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        kickerScoring.update(); // Update scoring state machine every loop
+        scoringAction.update(); // Update scoring state machine every loop
         pathState = autonomousPathUpdate();
 
         // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("Scoring State", kickerScoring.getCurrentState());
+        panelsTelemetry.debug("Scoring State", scoringAction.getCurrentState());
         panelsTelemetry.debug("X", follower.getPose().getX());
         panelsTelemetry.debug("Y", follower.getPose().getY());
         panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
@@ -83,13 +83,13 @@ public class BlueClose9Piece extends OpMode {
         switch (pathState) {
             case 0: // Drive to score preload
                 if (!follower.isBusy()) {
-                    kickerScoring.startScoring();
+                    scoringAction.startScoring();
                     setPathState(1);
                 }
                 break;
 
             case 1: // Wait for scoring sequence to complete
-                if (!kickerScoring.isScoring()) {
+                if (!scoringAction.isScoring()) {
                     // Scoring complete, go pickup ball 1
                     intake.startIntake();
                     follower.followPath(paths.Pickup1Part1, true);
@@ -114,13 +114,13 @@ public class BlueClose9Piece extends OpMode {
 
             case 4: // Score pickup 1
                 if (!follower.isBusy()) {
-                    kickerScoring.startScoring();
+                    scoringAction.startScoring();
                     setPathState(5);
                 }
                 break;
 
             case 5: // Wait for scoring sequence to complete
-                if (!kickerScoring.isScoring()) {
+                if (!scoringAction.isScoring()) {
                     // Scoring complete, go pickup ball 2
                     intake.startIntake();
                     follower.followPath(paths.Pickup2Part1, true);
@@ -145,13 +145,13 @@ public class BlueClose9Piece extends OpMode {
 
             case 8: // Score pickup 2
                 if (!follower.isBusy()) {
-                    kickerScoring.startScoring();
+                    scoringAction.startScoring();
                     setPathState(9);
                 }
                 break;
 
             case 9: // Wait for scoring sequence to complete
-                if (!kickerScoring.isScoring()) {
+                if (!scoringAction.isScoring()) {
                     // Scoring complete, leave
                     follower.followPath(paths.Leave, true);
                     setPathState(10);
@@ -185,7 +185,7 @@ public class BlueClose9Piece extends OpMode {
 
     @Override
     public void stop() {
-        kickerScoring.stopScoring();
+        scoringAction.stopScoring();
         autoEndPose = follower.getPose();
     }
 
@@ -200,68 +200,69 @@ public class BlueClose9Piece extends OpMode {
         public PathChain Leave;
 
         public Paths(Follower follower) {
+            // RED ALLIANCE - Mirrored coordinates from Blue
             ScorePreload = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(36.355, 135.673), new Pose(59.915, 83.882))
+                            new BezierLine(new Pose(107.645, 135.673), new Pose(84.085, 83.882))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(135))
+                    .setLinearHeadingInterpolation(Math.toRadians(90), Math.toRadians(45))
                     .build();
 
             Pickup1Part1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(59.915, 83.882), new Pose(41.027, 83.678))
+                            new BezierLine(new Pose(84.085, 83.882), new Pose(102.973, 83.678))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                     .build();
 
             Pickup1Part2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(41.027, 83.678), new Pose(13.811, 83.882))
+                            new BezierLine(new Pose(102.973, 83.678), new Pose(130.189, 83.882))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             ScorePickup1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(13.811, 83.882), new Pose(59.900, 83.882))
+                            new BezierLine(new Pose(130.189, 83.882), new Pose(84.100, 83.882))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                     .build();
 
             Pickup2Part1 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(59.900, 83.882), new Pose(60.000, 60.500))
+                            new BezierLine(new Pose(84.100, 83.882), new Pose(84.000, 60.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
                     .build();
 
             Pickup2Part2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(60.000, 60.500), new Pose(14.827, 60.118))
+                            new BezierLine(new Pose(84.000, 60.500), new Pose(129.173, 60.118))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             ScorePickup2 = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(14.827, 60.118), new Pose(59.915, 83.882))
+                            new BezierLine(new Pose(129.173, 60.118), new Pose(84.085, 83.882))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(135))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
                     .build();
 
             Leave = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(59.915, 83.882), new Pose(50.000, 73.500))
+                            new BezierLine(new Pose(84.085, 83.882), new Pose(94.000, 73.500))
                     )
-                    .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(225))
+                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(-45))
                     .build();
         }
     }
