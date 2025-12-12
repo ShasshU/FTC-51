@@ -96,7 +96,7 @@ public class BlueTeleop extends OpMode {
                     -gamepad1.left_stick_y * speedMultiplier,
                     -gamepad1.left_stick_x * speedMultiplier,
                     -gamepad1.right_stick_x * speedMultiplier * turningMultiplier, // Reduced turning speed
-                    true
+                    false
             );
         }
 

@@ -19,8 +19,8 @@ public class Shooter {
     private ShotMode currentShotMode = ShotMode.OFF;
 
 
-    private static final double NEAR_VELOCITY = 185;    //190
-    private static final double FAR_VELOCITY = 220;     //unsure
+    private static final double NEAR_VELOCITY = 1250;    //190
+    private static final double FAR_VELOCITY = 1430;     //unsure
     private static final double OFF_VELOCITY = 0.0;
 
     // =======================================
@@ -31,10 +31,10 @@ public class Shooter {
     private boolean lastBButton = false;
 
     // PIDF coefficients
-    private static final double P = 100;
-    private static final double I = 0.01;
+    private static final double P = 32;
+    private static final double I = 0;
     private static final double D = 0;
-    private static final double F = 0.1;
+    private static final double F = 20;
 
     // Store last target
     private double lastTargetVelocity = 0;
