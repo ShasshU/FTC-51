@@ -31,7 +31,7 @@ public class BlueClosePreload extends OpMode {
     private ScoringAction scoringAction;
 
     // Poses
-    private static final Pose startPose = new Pose(36.355, 135.673, Math.toRadians(90));
+    private static final Pose startPose = new Pose(20, 123, Math.toRadians(135));
     private static final Pose scorePose = new Pose(59.915, 83.882, Math.toRadians(135));
     private static final Pose leavePose = new Pose(23, 72, Math.toRadians(-90));
 

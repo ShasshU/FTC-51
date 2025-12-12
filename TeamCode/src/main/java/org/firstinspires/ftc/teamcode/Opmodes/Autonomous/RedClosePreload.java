@@ -31,7 +31,7 @@ public class RedClosePreload extends OpMode {
     private ScoringAction scoringAction;
 
     // Poses - RED ALLIANCE (mirrored from blue)
-    private static final Pose startPose = new Pose(107.645, 135.673, Math.toRadians(90));
+    private static final Pose startPose = new Pose(122, 121, Math.toRadians(45));
     private static final Pose scorePose = new Pose(84.085, 83.882, Math.toRadians(45));
     private static final Pose leavePose = new Pose(121, 72, Math.toRadians(-90));
 

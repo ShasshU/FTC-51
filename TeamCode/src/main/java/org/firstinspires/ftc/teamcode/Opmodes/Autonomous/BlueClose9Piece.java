@@ -32,7 +32,7 @@ public class BlueClose9Piece extends OpMode {
     private ScoringAction ScoringAction;
 
     // Starting pose
-    private static final Pose startPose = new Pose(36.355, 135.673, Math.toRadians(90));
+    private static final Pose startPose = new Pose(20, 123, Math.toRadians(135));
 
     // Store end pose for teleop continuity
     public static Pose autoEndPose = null;

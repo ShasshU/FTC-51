@@ -32,7 +32,7 @@ public class RedClose9Piece extends OpMode {
     private ScoringAction scoringAction;
 
     // Starting pose - RED ALLIANCE (mirrored from blue)
-    private static final Pose startPose = new Pose(107.645, 135.673, Math.toRadians(90));
+    private static final Pose startPose = new Pose(122, 121, Math.toRadians(45));
 
     // Store end pose for teleop continuity
     public static Pose autoEndPose = null;
