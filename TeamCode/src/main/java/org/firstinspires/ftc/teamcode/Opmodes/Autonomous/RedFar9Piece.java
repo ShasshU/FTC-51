@@ -252,7 +252,7 @@ public class RedFar9Piece extends OpMode {
             Leave = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(77.585, 18.685), new Pose(117.800, 26.307))
+                            new BezierLine(new Pose(77.585, 18.685), new Pose(117.800, 46.307))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(63), Math.toRadians(90))
                     .build();

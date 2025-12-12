@@ -29,7 +29,7 @@ public class BlueClose9Piece extends OpMode {
     private Intake intake;
     private Shooter shooter;
     private Kicker kicker;
-    private ScoringAction kickerScoring;
+    private ScoringAction ScoringAction;
 
     // Starting pose
     private static final Pose startPose = new Pose(36.355, 135.673, Math.toRadians(90));
@@ -49,7 +49,7 @@ public class BlueClose9Piece extends OpMode {
         intake = new Intake(hardwareMap);
         shooter = new Shooter(hardwareMap);
         kicker = new Kicker(hardwareMap);
-        kickerScoring = new ScoringAction(intake, shooter, kicker);
+        ScoringAction = new ScoringAction(intake, shooter, kicker);
 
         // Build paths
         paths = new Paths(follower);
@@ -67,29 +67,22 @@ public class BlueClose9Piece extends OpMode {
     @Override
     public void loop() {
         follower.update();
-        kickerScoring.update(); // Update scoring state machine every loop
+        ScoringAction.update(); // Update scoring state machine every loop
         pathState = autonomousPathUpdate();
 
-        // Log values to Panels and Driver Station
-        panelsTelemetry.debug("Path State", pathState);
-        panelsTelemetry.debug("Scoring State", kickerScoring.getCurrentState());
-        panelsTelemetry.debug("X", follower.getPose().getX());
-        panelsTelemetry.debug("Y", follower.getPose().getY());
-        panelsTelemetry.debug("Heading", Math.toDegrees(follower.getPose().getHeading()));
-        panelsTelemetry.update(telemetry);
     }
 
     public int autonomousPathUpdate() {
         switch (pathState) {
             case 0: // Drive to score preload
                 if (!follower.isBusy()) {
-                    kickerScoring.startScoring();
+                    ScoringAction.startScoring();
                     setPathState(1);
                 }
                 break;
 
             case 1: // Wait for scoring sequence to complete
-                if (!kickerScoring.isScoring()) {
+                if (!ScoringAction.isScoring()) {
                     // Scoring complete, go pickup ball 1
                     intake.startIntake();
                     follower.followPath(paths.Pickup1Part1, true);
@@ -114,13 +107,13 @@ public class BlueClose9Piece extends OpMode {
 
             case 4: // Score pickup 1
                 if (!follower.isBusy()) {
-                    kickerScoring.startScoring();
+                    ScoringAction.startScoring();
                     setPathState(5);
                 }
                 break;
 
             case 5: // Wait for scoring sequence to complete
-                if (!kickerScoring.isScoring()) {
+                if (!ScoringAction.isScoring()) {
                     // Scoring complete, go pickup ball 2
                     intake.startIntake();
                     follower.followPath(paths.Pickup2Part1, true);
@@ -145,13 +138,13 @@ public class BlueClose9Piece extends OpMode {
 
             case 8: // Score pickup 2
                 if (!follower.isBusy()) {
-                    kickerScoring.startScoring();
+                    ScoringAction.startScoring();
                     setPathState(9);
                 }
                 break;
 
             case 9: // Wait for scoring sequence to complete
-                if (!kickerScoring.isScoring()) {
+                if (!ScoringAction.isScoring()) {
                     // Scoring complete, leave
                     follower.followPath(paths.Leave, true);
                     setPathState(10);
@@ -185,7 +178,7 @@ public class BlueClose9Piece extends OpMode {
 
     @Override
     public void stop() {
-        kickerScoring.stopScoring();
+        ScoringAction.stopScoring();
         autoEndPose = follower.getPose();
     }
 

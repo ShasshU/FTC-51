@@ -251,7 +251,7 @@ public class BlueFar9Piece extends OpMode {
             Leave = follower
                     .pathBuilder()
                     .addPath(
-                            new BezierLine(new Pose(66.415, 18.685), new Pose(26.200, 26.307))
+                            new BezierLine(new Pose(66.415, 18.685), new Pose(26.200, 46.307))
                     )
                     .setLinearHeadingInterpolation(Math.toRadians(117), Math.toRadians(90))
                     .build();

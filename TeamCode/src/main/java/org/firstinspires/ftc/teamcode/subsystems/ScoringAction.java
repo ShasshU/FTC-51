@@ -1,12 +1,8 @@
 package org.firstinspires.ftc.teamcode.subsystems;
 
 import com.qualcomm.robotcore.util.ElapsedTime;
-import org.firstinspires.ftc.teamcode.subsystems.Intake;
-import org.firstinspires.ftc.teamcode.subsystems.Shooter;
-import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 
-
-public class ScoringAction{
+public class ScoringAction {
 
     private Intake intake;
     private Shooter shooter;
@@ -15,27 +11,27 @@ public class ScoringAction{
 
     public enum ScoringState {
         IDLE,
-        SPINNING_UP,           // Flywheel ramping up + slow intake
+        FEEDING_1,             // Start intake, wait for ball 1 to feed
+        PAUSE_1,               // Pause intake briefly
         KICK_1,                // Kick first ball
-        RETRACT_1,             // Retract kicker
-        FEEDING_2,             // Wait for ball 2 to feed
+        FEEDING_2,             // Resume intake, wait for ball 2 to feed
+        PAUSE_2,               // Pause intake briefly
         KICK_2,                // Kick second ball
-        RETRACT_2,             // Retract kicker
-        FEEDING_3,             // Wait for ball 3 to feed
+        FEEDING_3,             // Resume intake, wait for ball 3 to feed
+        PAUSE_3,               // Pause intake briefly
         KICK_3,                // Kick third ball
-        RETRACT_3,             // Retract kicker
+        WAITING_FINAL_KICK,    // Wait for final kick pulse to complete
         COMPLETE
     }
 
     private ScoringState currentState = ScoringState.IDLE;
 
     // BASELINE TIMINGS - Tune these values after testing
-    private static final double SPINUP_DURATION = 3.0;        // Time for flywheel to reach speed
-    private static final double KICK_DURATION = 0.3;          // How long to hold kicker extended
-    private static final double FEEDING_DURATION = 1.5;       // Time between kicks for ball to feed
+    private static final double FEEDING_DURATION = 1.5;       // Time for ball to feed
+    private static final double PAUSE_DURATION = 0.3;         // Brief pause before kick (tune this!)
 
     // Power settings
-    private static final double INTAKE_FEEDING_POWER = 0.4;   // Slow intake power during feeding
+    private static final double INTAKE_FEEDING_POWER = 0.4;   // Intake power during feeding
 
     public ScoringAction(Intake intake, Shooter shooter, Kicker kicker) {
         this.intake = intake;
@@ -46,10 +42,11 @@ public class ScoringAction{
 
     /**
      * Start the 3-ball scoring sequence
+     * Make sure flywheel is already spinning before calling this!
      */
     public void startScoring() {
         if (currentState == ScoringState.IDLE) {
-            currentState = ScoringState.SPINNING_UP;
+            currentState = ScoringState.FEEDING_1;
             timer.reset();
         }
     }
@@ -58,91 +55,101 @@ public class ScoringAction{
      * Update the state machine - call this in your loop
      */
     public void update() {
+        // CRITICAL: Also update kicker for pulse timing
+        kicker.update();
+
         switch (currentState) {
             case IDLE:
                 // Do nothing, waiting for startScoring()
                 break;
 
-            case SPINNING_UP:
-                // Spin up flywheel and start slow intake
-                shooter.setNearShot();
+            case FEEDING_1:
+                // Start intake and wait for first ball to feed
                 intake.setPower(INTAKE_FEEDING_POWER);
 
-                if (timer.seconds() >= SPINUP_DURATION) {
+                if (timer.seconds() >= FEEDING_DURATION) {
+                    currentState = ScoringState.PAUSE_1;
+                    timer.reset();
+                }
+                break;
+
+            case PAUSE_1:
+                // Pause intake briefly to prevent jamming
+                intake.stop();
+
+                if (timer.seconds() >= PAUSE_DURATION) {
                     currentState = ScoringState.KICK_1;
                     timer.reset();
                 }
                 break;
 
             case KICK_1:
-                // Extend kicker for first shot
-                kicker.extend();
-                // Flywheel and intake stay running
-
-                if (timer.seconds() >= KICK_DURATION) {
-                    currentState = ScoringState.RETRACT_1;
-                    timer.reset();
-                }
-                break;
-
-            case RETRACT_1:
-                // Retract kicker immediately
-                kicker.retract();
+                // Kick first ball (automatic pulse)
+                kicker.pulse();
                 currentState = ScoringState.FEEDING_2;
                 timer.reset();
                 break;
 
             case FEEDING_2:
-                // Wait for ball 2 to feed through intake
-                // Flywheel and intake stay running
+                // Resume intake, wait for ball 2 to feed
+                intake.setPower(INTAKE_FEEDING_POWER);
 
                 if (timer.seconds() >= FEEDING_DURATION) {
+                    currentState = ScoringState.PAUSE_2;
+                    timer.reset();
+                }
+                break;
+
+            case PAUSE_2:
+                // Pause intake briefly
+                intake.stop();
+
+                if (timer.seconds() >= PAUSE_DURATION) {
                     currentState = ScoringState.KICK_2;
                     timer.reset();
                 }
                 break;
 
             case KICK_2:
-                // Extend kicker for second shot
-                kicker.extend();
-
-                if (timer.seconds() >= KICK_DURATION) {
-                    currentState = ScoringState.RETRACT_2;
-                    timer.reset();
-                }
-                break;
-
-            case RETRACT_2:
-                // Retract kicker
-                kicker.retract();
+                // Kick second ball (automatic pulse)
+                kicker.pulse();
                 currentState = ScoringState.FEEDING_3;
                 timer.reset();
                 break;
 
             case FEEDING_3:
-                // Wait for ball 3 to feed through intake
+                // Resume intake, wait for ball 3 to feed
+                intake.setPower(INTAKE_FEEDING_POWER);
 
                 if (timer.seconds() >= FEEDING_DURATION) {
+                    currentState = ScoringState.PAUSE_3;
+                    timer.reset();
+                }
+                break;
+
+            case PAUSE_3:
+                // Pause intake briefly
+                intake.stop();
+
+                if (timer.seconds() >= PAUSE_DURATION) {
                     currentState = ScoringState.KICK_3;
                     timer.reset();
                 }
                 break;
 
             case KICK_3:
-                // Extend kicker for third shot
-                kicker.extend();
-
-                if (timer.seconds() >= KICK_DURATION) {
-                    currentState = ScoringState.RETRACT_3;
-                    timer.reset();
-                }
+                // Kick third ball (automatic pulse)
+                kicker.pulse();
+                currentState = ScoringState.WAITING_FINAL_KICK;
+                timer.reset();
                 break;
 
-            case RETRACT_3:
-                // Retract kicker and stop everything
-                kicker.retract();
-                stopScoring();
-                currentState = ScoringState.COMPLETE;
+            case WAITING_FINAL_KICK:
+                // Wait for final kick pulse to complete
+                if (timer.seconds() >= (Kicker.PULSE_DURATION_MS / 1000.0)) {
+                    stopScoring();
+                    currentState = ScoringState.COMPLETE;
+                }
                 break;
 
             case COMPLETE:
@@ -153,11 +160,10 @@ public class ScoringAction{
     }
 
     /**
-     * Stop all subsystems
+     * Stop all subsystems (except shooter - driver controls that)
      */
     public void stopScoring() {
         intake.stop();
-        shooter.turnOff();
         kicker.retract();
         currentState = ScoringState.IDLE;
     }
@@ -187,6 +193,6 @@ public class ScoringAction{
      * Get total estimated sequence time
      */
     public static double getTotalSequenceTime() {
-        return SPINUP_DURATION + (KICK_DURATION * 3) + (FEEDING_DURATION * 2);
+        return (FEEDING_DURATION * 3) + (PAUSE_DURATION * 3) + (Kicker.PULSE_DURATION_MS / 1000.0 * 3);
     }
 }

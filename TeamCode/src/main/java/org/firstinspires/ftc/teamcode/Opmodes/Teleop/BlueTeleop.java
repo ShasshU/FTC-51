@@ -14,7 +14,6 @@ import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 import static org.firstinspires.ftc.teamcode.Opmodes.Autonomous.BlueClose9Piece.autoEndPose;
 
 
-
 @Configurable
 @TeleOp(name = "Blue TeleOp", group = "TeleOp")
 public class BlueTeleop extends OpMode {
@@ -67,6 +66,7 @@ public class BlueTeleop extends OpMode {
         // ========== UPDATE ALL SYSTEMS ==========
         follower.update();
         scoringAction.update(); // CRITICAL: Update scoring state machine every loop
+        kicker.update(); // CRITICAL: Update kicker for automatic pulse retracting
 
         // ========== AUTO PARK HANDLING ==========
         // Back button = Auto drive to park
@@ -152,12 +152,12 @@ public class BlueTeleop extends OpMode {
         }
 
         // ========== KICKER CONTROL ==========
-        // A button = Extend kicker (kick!)
+        // A button = Automatic kick pulse (extend → wait → retract)
         if (gamepad1.aWasPressed()) {
-            kicker.extend();
+            kicker.pulse();
         }
 
-        // B button = Retract kicker
+        // B button = Manual retract (emergency/override)
         if (gamepad1.bWasPressed()) {
             kicker.retract();
         }
