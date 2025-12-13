@@ -34,7 +34,7 @@ public class BlueTeleop extends OpMode {
     // Slow mode
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
-    private double turningMultiplier = 0.4;  // Reduce turning speed to 40%
+    private double turningMultiplier = 0.6;  // Reduce turning speed to 40%
 
     // Auto park state
     private boolean isAutoPark = false;
@@ -53,12 +53,19 @@ public class BlueTeleop extends OpMode {
         scoringAction = new ScoringAction(intake, shooter, kicker);
 
         telemetry.addLine("TeleOp Initialized!");
+        telemetry.addData("Starting Heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.update();
     }
 
     @Override
     public void start() {
         follower.startTeleopDrive();
+
+        // FIX: Re-zero field orientation to current robot heading
+        // This makes "wherever robot is facing now" = "forward on field"
+        // Prevents reversed controls when transitioning from auto
+        Pose currentPose = follower.getPose();
+        follower.setPose(new Pose(currentPose.getX(), currentPose.getY(), 0));
     }
 
     @Override
@@ -96,7 +103,7 @@ public class BlueTeleop extends OpMode {
                     -gamepad1.left_stick_y * speedMultiplier,
                     -gamepad1.left_stick_x * speedMultiplier,
                     -gamepad1.right_stick_x * speedMultiplier * turningMultiplier, // Reduced turning speed
-                    false
+                    false  // false = field-oriented ON
             );
         }
 
