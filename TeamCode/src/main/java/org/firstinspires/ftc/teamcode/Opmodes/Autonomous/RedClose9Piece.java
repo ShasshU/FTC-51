@@ -26,6 +26,7 @@ public class RedClose9Piece extends OpMode {
     private int pathState;
     private Paths paths;
     private ElapsedTime shooterTimer;
+    private ElapsedTime waitTimer;
 
     // Subsystems
     private Intake intake;
@@ -34,9 +35,11 @@ public class RedClose9Piece extends OpMode {
     private ScoringAction scoringAction;
 
     // Starting pose
-    private static final Pose startPose = new Pose(122, 121, Math.toRadians(45));
-    // Shooter spinup time
-    private static final double SHOOTER_SPINUP_TIME = 3.0; // seconds to reach speed
+    private static final Pose startPose = new Pose(124, 123, Math.toRadians(45));
+
+    // Timing constants
+    private static final double SHOOTER_SPINUP_TIME = 3.0;
+    private static final double POST_SCORE_WAIT = 0.5;
 
     // Store end pose for teleop continuity
     public static Pose autoEndPose = null;
@@ -49,8 +52,9 @@ public class RedClose9Piece extends OpMode {
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
 
-        // Initialize timer
+        // Initialize timers
         shooterTimer = new ElapsedTime();
+        waitTimer = new ElapsedTime();
 
         // Initialize subsystems
         intake = new Intake(hardwareMap);
@@ -67,22 +71,18 @@ public class RedClose9Piece extends OpMode {
 
     @Override
     public void start() {
-        // Start shooter spinning immediately
         shooter.setNearShot();
         shooterTimer.reset();
-
         pathState = 0;
-        setPathState(pathState);
     }
 
     @Override
     public void loop() {
         follower.update();
-        scoringAction.update(); // Update scoring state machine every loop
-        kicker.update(); // Update kicker for pulse timing
+        scoringAction.update();
+        kicker.update();
         pathState = autonomousPathUpdate();
 
-        // Log values to Panels and Driver Station
         panelsTelemetry.debug("Path State", pathState);
         panelsTelemetry.debug("Scoring State", scoringAction.getCurrentState());
         panelsTelemetry.debug("Shooter Velocity", shooter.getCurrentVelocity());
@@ -94,107 +94,121 @@ public class RedClose9Piece extends OpMode {
 
     public int autonomousPathUpdate() {
         switch (pathState) {
-            case 0: // Wait for shooter to spin up, then drive to basket
+            case 0: // Wait for shooter to spin up
                 if (shooterTimer.seconds() >= SHOOTER_SPINUP_TIME) {
                     follower.followPath(paths.ScorePreload, true);
-                    setPathState(1);
+                    pathState = 1;
                 }
                 break;
 
             case 1: // Drive to score preload
                 if (!follower.isBusy()) {
                     scoringAction.startScoring();
-                    setPathState(2);
+                    pathState = 2;
                 }
                 break;
 
-            case 2: // Wait for scoring sequence to complete
+            case 2: // Wait for scoring to complete
                 if (!scoringAction.isScoring()) {
-                    // Scoring complete, go pickup ball 1
+                    waitTimer.reset();
+                    pathState = 3;
+                }
+                break;
+
+            case 3: // Wait after scoring
+                if (waitTimer.seconds() >= POST_SCORE_WAIT) {
                     intake.startIntake();
                     follower.followPath(paths.Pickup1Part1, true);
-                    setPathState(3);
+                    pathState = 4;
                 }
                 break;
 
-            case 3: // Continue to pickup 1
+            case 4: // Continue to pickup 1
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Pickup1Part2, true);
-                    setPathState(4);
+                    pathState = 5;
                 }
                 break;
 
-            case 4: // Drive back to score pickup 1
+            case 5: // Drive back to score pickup 1
                 if (!follower.isBusy()) {
                     intake.stop();
                     follower.followPath(paths.ScorePickup1, true);
-                    setPathState(5);
+                    pathState = 6;
                 }
                 break;
 
-            case 5: // Score pickup 1
+            case 6: // Score pickup 1
                 if (!follower.isBusy()) {
                     scoringAction.startScoring();
-                    setPathState(6);
+                    pathState = 7;
                 }
                 break;
 
-            case 6: // Wait for scoring sequence to complete
+            case 7: // Wait for scoring to complete
                 if (!scoringAction.isScoring()) {
-                    // Scoring complete, go pickup ball 2
+                    waitTimer.reset();
+                    pathState = 8;
+                }
+                break;
+
+            case 8: // Wait after scoring
+                if (waitTimer.seconds() >= POST_SCORE_WAIT) {
                     intake.startIntake();
                     follower.followPath(paths.Pickup2Part1, true);
-                    setPathState(7);
+                    pathState = 9;
                 }
                 break;
 
-            case 7: // Continue to pickup 2
+            case 9: // Continue to pickup 2
                 if (!follower.isBusy()) {
                     follower.followPath(paths.Pickup2Part2, true);
-                    setPathState(8);
+                    pathState = 10;
                 }
                 break;
 
-            case 8: // Drive back to score pickup 2
+            case 10: // Drive back to score pickup 2
                 if (!follower.isBusy()) {
                     intake.stop();
                     follower.followPath(paths.ScorePickup2, true);
-                    setPathState(9);
+                    pathState = 11;
                 }
                 break;
 
-            case 9: // Score pickup 2
+            case 11: // Score pickup 2
                 if (!follower.isBusy()) {
                     scoringAction.startScoring();
-                    setPathState(10);
+                    pathState = 12;
                 }
                 break;
 
-            case 10: // Wait for scoring sequence to complete
+            case 12: // Wait for scoring to complete
                 if (!scoringAction.isScoring()) {
-                    // Scoring complete, turn off shooter and leave
+                    waitTimer.reset();
+                    pathState = 13;
+                }
+                break;
+
+            case 13: // Wait after final scoring
+                if (waitTimer.seconds() >= POST_SCORE_WAIT) {
                     shooter.turnOff();
                     follower.followPath(paths.Leave, true);
-                    setPathState(11);
+                    pathState = 14;
                 }
                 break;
 
-            case 11: // Drive to leave position
+            case 14: // Drive to leave
                 if (!follower.isBusy()) {
                     autoEndPose = follower.getPose();
-                    setPathState(12);
+                    pathState = 15;
                 }
                 break;
 
-            case 12: // Complete
+            case 15: // Complete
                 break;
         }
 
         return pathState;
-    }
-
-    public void setPathState(int state) {
-        pathState = state;
     }
 
     @Override
@@ -217,66 +231,50 @@ public class RedClose9Piece extends OpMode {
         public Paths(Follower follower) {
             ScorePreload = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(107.645, 135.673), new Pose(84.085, 83.882))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(50))
+                    .addPath(new BezierLine(new Pose(124, 123), new Pose(84.085, 83.882)))
+                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(42.5))
                     .build();
 
             Pickup1Part1 = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(84.085, 83.882), new Pose(102.973, 83.678))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                    .addPath(new BezierLine(new Pose(84.085, 83.882), new Pose(95, 83.678)))
+                    .setLinearHeadingInterpolation(Math.toRadians(42.5), Math.toRadians(0))
                     .build();
 
             Pickup1Part2 = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(102.973, 83.678), new Pose(130.189, 83.882))
-                    )
+                    .addPath(new BezierLine(new Pose(95, 83.678), new Pose(130.189, 83.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             ScorePickup1 = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(130.189, 83.882), new Pose(84.100, 83.882))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                    .addPath(new BezierLine(new Pose(130.189, 83.882), new Pose(84.100, 83.882)))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(42.5))
                     .build();
 
             Pickup2Part1 = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(84.100, 83.882), new Pose(84.000, 60.500))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(0))
+                    .addPath(new BezierLine(new Pose(84.100, 83.882), new Pose(84.000, 60.500)))
+                    .setLinearHeadingInterpolation(Math.toRadians(42.5), Math.toRadians(0))
                     .build();
 
             Pickup2Part2 = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(84.000, 60.500), new Pose(133, 60.118))
-                    )
+                    .addPath(new BezierLine(new Pose(84.000, 60.500), new Pose(132, 60.118)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             ScorePickup2 = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(129.173, 60.118), new Pose(84.085, 83.882))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(45))
+                    .addPath(new BezierLine(new Pose(129.173, 60.118), new Pose(84.085, 83.882)))
+                    .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(42.5))
                     .build();
 
             Leave = follower
                     .pathBuilder()
-                    .addPath(
-                            new BezierLine(new Pose(84.085, 83.882), new Pose(94.000, 73.500))
-                    )
-                    .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(-45))
+                    .addPath(new BezierLine(new Pose(84.085, 83.882), new Pose(94.000, 73.500)))
+                    .setLinearHeadingInterpolation(Math.toRadians(42.5), Math.toRadians(-45))
                     .build();
         }
     }
