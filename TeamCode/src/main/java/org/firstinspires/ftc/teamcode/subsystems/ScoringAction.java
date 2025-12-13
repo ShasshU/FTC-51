@@ -31,7 +31,7 @@ public class ScoringAction {
     private static final double PAUSE_DURATION = 0.3;         // Brief pause before kick (tune this!)
 
     // Power settings
-    private static final double INTAKE_FEEDING_POWER = 0.7;   // Intake power during feeding
+    private static final double INTAKE_FEEDING_POWER = 1;   // Intake power during feeding
 
     public ScoringAction(Intake intake, Shooter shooter, Kicker kicker) {
         this.intake = intake;
