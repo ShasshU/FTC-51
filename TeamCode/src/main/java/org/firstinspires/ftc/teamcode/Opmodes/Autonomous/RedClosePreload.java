@@ -9,6 +9,7 @@ import com.pedropathing.geometry.Pose;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.subsystems.Intake;
 import org.firstinspires.ftc.teamcode.subsystems.Shooter;
@@ -23,6 +24,7 @@ public class RedClosePreload extends OpMode {
     private TelemetryManager panelsTelemetry;
     public Follower follower;
     private int pathState;
+    private ElapsedTime shooterTimer;
 
     // Subsystems
     private Intake intake;
@@ -30,10 +32,13 @@ public class RedClosePreload extends OpMode {
     private Kicker kicker;
     private ScoringAction scoringAction;
 
-    // Poses - RED ALLIANCE (mirrored from blue)
+    // Poses
     private static final Pose startPose = new Pose(122, 121, Math.toRadians(45));
-    private static final Pose scorePose = new Pose(84.085, 83.882, Math.toRadians(45));
+    private static final Pose scorePose = new Pose(84.085, 83.882, Math.toRadians(50));
     private static final Pose leavePose = new Pose(121, 72, Math.toRadians(-90));
+
+    // Shooter spinup time
+    private static final double SHOOTER_SPINUP_TIME = 3.0;
 
     // Paths
     private PathChain scorePreload;
@@ -49,6 +54,9 @@ public class RedClosePreload extends OpMode {
         // Initialize Pedro Pathing
         follower = Constants.createFollower(hardwareMap);
         follower.setStartingPose(startPose);
+
+        // Initialize timer
+        shooterTimer = new ElapsedTime();
 
         // Initialize subsystems
         intake = new Intake(hardwareMap);
@@ -79,14 +87,18 @@ public class RedClosePreload extends OpMode {
 
     @Override
     public void start() {
+        // Start shooter spinning immediately
+        shooter.setNearShot();
+        shooterTimer.reset();
+
         pathState = 0;
-        follower.followPath(scorePreload, true);
     }
 
     @Override
     public void loop() {
         follower.update();
-        scoringAction.update(); // Update scoring state machine every loop
+        scoringAction.update();
+        kicker.update();
         pathState = autonomousPathUpdate();
 
         // Telemetry
@@ -100,30 +112,36 @@ public class RedClosePreload extends OpMode {
 
     public int autonomousPathUpdate() {
         switch (pathState) {
-            case 0: // Drive to basket
-                if (!follower.isBusy()) {
-                    // Start scoring 3 preloaded balls
-                    scoringAction.startScoring();
+            case 0: // Wait for shooter to spin up
+                if (shooterTimer.seconds() >= SHOOTER_SPINUP_TIME) {
+                    follower.followPath(scorePreload, true);
                     pathState = 1;
                 }
                 break;
 
-            case 1: // Wait for scoring to complete
-                if (!scoringAction.isScoring()) {
-                    // Scoring done, leave
-                    follower.followPath(leave, true);
+            case 1: // Drive to basket
+                if (!follower.isBusy()) {
+                    scoringAction.startScoring();
                     pathState = 2;
                 }
                 break;
 
-            case 2: // Drive to leave position
-                if (!follower.isBusy()) {
-                    autoEndPose = follower.getPose();
+            case 2: // Wait for scoring to complete
+                if (!scoringAction.isScoring()) {
+                    shooter.turnOff();
+                    follower.followPath(leave, true);
                     pathState = 3;
                 }
                 break;
 
-            case 3: // Complete
+            case 3: // Drive to leave position
+                if (!follower.isBusy()) {
+                    autoEndPose = follower.getPose();
+                    pathState = 4;
+                }
+                break;
+
+            case 4: // Complete
                 break;
         }
 
@@ -133,6 +151,7 @@ public class RedClosePreload extends OpMode {
     @Override
     public void stop() {
         scoringAction.stopScoring();
+        shooter.turnOff();
         autoEndPose = follower.getPose();
     }
 }
