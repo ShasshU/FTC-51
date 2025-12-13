@@ -255,19 +255,19 @@ public class RedClose9Piece extends OpMode {
 
             Pickup2Part1 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(84.100, 83.882), new Pose(84.000, 60.500)))
+                    .addPath(new BezierLine(new Pose(84.100, 83.882), new Pose(84.000, 57)))
                     .setLinearHeadingInterpolation(Math.toRadians(42.5), Math.toRadians(0))
                     .build();
 
             Pickup2Part2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(84.000, 60.500), new Pose(132, 60.118)))
+                    .addPath(new BezierLine(new Pose(84.000, 57), new Pose(132, 57)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             ScorePickup2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.173, 60.118), new Pose(84.085, 83.882)))
+                    .addPath(new BezierLine(new Pose(129.173, 57), new Pose(84.085, 83.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(42.5))
                     .build();
 

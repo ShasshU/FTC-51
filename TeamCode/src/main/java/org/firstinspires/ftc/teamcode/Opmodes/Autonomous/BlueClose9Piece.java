@@ -232,49 +232,49 @@ public class BlueClose9Piece extends OpMode {
             ScorePreload = follower
                     .pathBuilder()
                     .addPath(new BezierLine(new Pose(20, 123), new Pose(59.915, 83.882)))
-                    .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(50))
+                    .setLinearHeadingInterpolation(Math.toRadians(135), Math.toRadians(137.5))
                     .build();
 
             Pickup1Part1 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(59.915, 83.882), new Pose(102.973, 83.678)))
-                    .setLinearHeadingInterpolation(Math.toRadians(50), Math.toRadians(180))
+                    .addPath(new BezierLine(new Pose(59.915, 83.882), new Pose(48, 83.678)))
+                    .setLinearHeadingInterpolation(Math.toRadians(137.5), Math.toRadians(180))
                     .build();
 
             Pickup1Part2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(102.973, 83.678), new Pose(13.811, 83.882)))
+                    .addPath(new BezierLine(new Pose(48, 83.678), new Pose(13.811, 83.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
             ScorePickup1 = follower
                     .pathBuilder()
                     .addPath(new BezierLine(new Pose(13.811, 83.882), new Pose(59.900, 83.882)))
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(50))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(137.5))
                     .build();
 
             Pickup2Part1 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(59.900, 83.882), new Pose(60.000, 60.500)))
-                    .setLinearHeadingInterpolation(Math.toRadians(50), Math.toRadians(180))
+                    .addPath(new BezierLine(new Pose(59.900, 83.882), new Pose(60.000, 57)))
+                    .setLinearHeadingInterpolation(Math.toRadians(137.5), Math.toRadians(180))
                     .build();
 
             Pickup2Part2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(60.000, 60.500), new Pose(12, 60.118)))
+                    .addPath(new BezierLine(new Pose(60.000, 57), new Pose(12, 57)))
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(180))
                     .build();
 
             ScorePickup2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(14.827, 60.118), new Pose(59.915, 83.882)))
-                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(50))
+                    .addPath(new BezierLine(new Pose(14.827, 57), new Pose(59.915, 83.882)))
+                    .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(137.5))
                     .build();
 
             Leave = follower
                     .pathBuilder()
                     .addPath(new BezierLine(new Pose(59.915, 83.882), new Pose(50.000, 73.500)))
-                    .setLinearHeadingInterpolation(Math.toRadians(50), Math.toRadians(225))
+                    .setLinearHeadingInterpolation(Math.toRadians(137.5), Math.toRadians(225))
                     .build();
         }
     }
