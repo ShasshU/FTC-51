@@ -132,7 +132,7 @@ public class BlueClose9Piece extends OpMode {
 
             case 5: // Drive back to score pickup 1
                 if (!follower.isBusy()) {
-                    // Keep intake running during return
+                    // Keep intake running during return (EXTENDED INTAKE TIME)
                     follower.followPath(paths.ScorePickup1, true);
                     pathState = 6;
                 }
@@ -146,11 +146,31 @@ public class BlueClose9Piece extends OpMode {
                 }
                 break;
 
-// ... states 7-9 unchanged ...
+            case 7: // Wait for scoring to complete
+                if (!scoringAction.isScoring()) {
+                    waitTimer.reset();
+                    pathState = 8;
+                }
+                break;
+
+            case 8: // Wait after scoring
+                if (waitTimer.seconds() >= POST_SCORE_WAIT) {
+                    intake.startIntake();
+                    follower.followPath(paths.Pickup2Part1, true);
+                    pathState = 9;
+                }
+                break;
+
+            case 9: // Continue to pickup 2
+                if (!follower.isBusy()) {
+                    follower.followPath(paths.Pickup2Part2, true);
+                    pathState = 10;
+                }
+                break;
 
             case 10: // Drive back to score pickup 2
                 if (!follower.isBusy()) {
-                    // Keep intake running during return
+                    // Keep intake running during return (EXTENDED INTAKE TIME)
                     follower.followPath(paths.ScorePickup2, true);
                     pathState = 11;
                 }
@@ -163,6 +183,7 @@ public class BlueClose9Piece extends OpMode {
                     pathState = 12;
                 }
                 break;
+
             case 12: // Wait for scoring to complete
                 if (!scoringAction.isScoring()) {
                     waitTimer.reset();
@@ -248,7 +269,7 @@ public class BlueClose9Piece extends OpMode {
 
             ScorePickup2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(14.827, 57), new Pose(59.915, 83.882)))
+                    .addPath(new BezierLine(new Pose(12, 57), new Pose(59.915, 83.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(180), Math.toRadians(137.5))
                     .build();
 

@@ -132,7 +132,7 @@ public class RedClose9Piece extends OpMode {
 
             case 5: // Drive back to score pickup 1
                 if (!follower.isBusy()) {
-                    intake.stop();
+                    // Keep intake running during return (EXTENDED INTAKE TIME)
                     follower.followPath(paths.ScorePickup1, true);
                     pathState = 6;
                 }
@@ -140,6 +140,7 @@ public class RedClose9Piece extends OpMode {
 
             case 6: // Score pickup 1
                 if (!follower.isBusy()) {
+                    intake.stop();  // Stop NOW, right before scoring
                     scoringAction.startScoring();
                     pathState = 7;
                 }
@@ -169,7 +170,7 @@ public class RedClose9Piece extends OpMode {
 
             case 10: // Drive back to score pickup 2
                 if (!follower.isBusy()) {
-                    intake.stop();
+                    // Keep intake running during return (EXTENDED INTAKE TIME)
                     follower.followPath(paths.ScorePickup2, true);
                     pathState = 11;
                 }
@@ -177,6 +178,7 @@ public class RedClose9Piece extends OpMode {
 
             case 11: // Score pickup 2
                 if (!follower.isBusy()) {
+                    intake.stop();  // Stop NOW, right before scoring
                     scoringAction.startScoring();
                     pathState = 12;
                 }
@@ -267,7 +269,7 @@ public class RedClose9Piece extends OpMode {
 
             ScorePickup2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(129.173, 57), new Pose(84.085, 83.882)))
+                    .addPath(new BezierLine(new Pose(132, 57), new Pose(84.085, 83.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(42.5))
                     .build();
 
