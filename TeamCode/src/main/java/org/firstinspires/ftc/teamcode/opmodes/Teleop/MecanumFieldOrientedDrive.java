@@ -2,18 +2,21 @@ package org.firstinspires.ftc.teamcode.opmodes.Teleop;
 
 import static java.lang.Thread.sleep;
 
+import com.qualcomm.hardware.limelightvision.Limelight3A;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.IMU;
-
+import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 @TeleOp(name = "MecanumFieldOrientedDrive", group = "TeleOp")
 public class MecanumFieldOrientedDrive extends LinearOpMode {
 
     // Drive motors
     private DcMotor leftFront, rightFront, leftBack, rightBack;
+
+    private Turret turret;
 
     // State variables
     private boolean lastA = false;
@@ -32,6 +35,7 @@ public class MecanumFieldOrientedDrive extends LinearOpMode {
         rightFront = hardwareMap.get(DcMotor.class, "rightFront");
         leftBack = hardwareMap.get(DcMotor.class, "leftBack");
         rightBack = hardwareMap.get(DcMotor.class, "rightBack");
+        turret = new Turret(hardwareMap);
 
         // Motor directions (match your working code)
         rightBack.setDirection(DcMotor.Direction.REVERSE);
@@ -65,9 +69,13 @@ public class MecanumFieldOrientedDrive extends LinearOpMode {
                 imu.resetYaw();
             }
 
+            Turret.aimAtTarget();
 
+            telemetry.addData("Turret Pos", turret.getPosition());
             telemetry.addData("Yaw (deg)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
+
+            turret.stop();
         }
     }
 

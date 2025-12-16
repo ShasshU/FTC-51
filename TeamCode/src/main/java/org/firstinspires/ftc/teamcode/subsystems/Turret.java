@@ -9,8 +9,8 @@ import com.qualcomm.hardware.limelightvision.Limelight3A;
 
 public class Turret {
 
-    private DcMotor turretMotor;
-    private Limelight3A limelight;
+    private static DcMotor turretMotor;
+    private static Limelight3A limelight;
 
     // ===== TUNING CONSTANTS =====
     private static final double kP = 0.02;
@@ -33,7 +33,7 @@ public class Turret {
     // ===== PUBLIC METHODS =====
 
     /** Call this every loop to auto-aim the turret */
-    public void aimAtTarget() {
+    public static void aimAtTarget() {
         LLResult results = limelight.getLatestResult();
 
         if (results == null || !results.isValid()) {
