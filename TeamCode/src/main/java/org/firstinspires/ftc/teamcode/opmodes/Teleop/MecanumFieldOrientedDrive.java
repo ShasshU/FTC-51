@@ -7,6 +7,7 @@ import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
 import org.firstinspires.ftc.teamcode.subsystems.Turret;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
@@ -65,17 +66,16 @@ public class MecanumFieldOrientedDrive extends LinearOpMode {
 
             driveFieldRelative(0.7 * forward, 0.5*strafe, 0.4 * rotate);
 
+            Turret.aimAtTarget();
+
             if (gamepad1.back) {
                 imu.resetYaw();
             }
-
-            Turret.aimAtTarget();
 
             telemetry.addData("Turret Pos", turret.getPosition());
             telemetry.addData("Yaw (deg)", imu.getRobotYawPitchRollAngles().getYaw(AngleUnit.DEGREES));
             telemetry.update();
 
-            turret.stop();
         }
     }
 
