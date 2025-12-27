@@ -8,7 +8,7 @@ public class Kicker {
     private Servo kicker;
 
     // Servo positions - TUNE THESE VALUES
-    public static final double RETRACTED_POSITION = 0.0;  // Servo pulled back
+    public static final double RETRACTED_POSITION = 0.65;  // Servo pulled back
     public static final double EXTENDED_POSITION = 1.0;   // Servo pushed out to kick
 
     // Optional intermediate position if needed
@@ -19,7 +19,7 @@ public class Kicker {
     // Pulse timing
     private boolean pulseActive = false;
     private long pulseStartTime = 0;
-    public static final long PULSE_DURATION_MS = 300; // How long to hold extended (tune this!)
+    public static final long PULSE_DURATION_MS = 250; // How long to hold extended (tune this!)
 
     public Kicker(HardwareMap hardwareMap) {
         kicker = hardwareMap.get(Servo.class, "kicker");

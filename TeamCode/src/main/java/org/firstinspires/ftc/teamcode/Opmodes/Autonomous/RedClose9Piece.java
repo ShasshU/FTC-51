@@ -38,8 +38,8 @@ public class RedClose9Piece extends OpMode {
     private static final Pose startPose = new Pose(124, 123, Math.toRadians(45));
 
     // Timing constants
-    private static final double SHOOTER_SPINUP_TIME = 1.5;
-    private static final double POST_SCORE_WAIT = 0.5;
+    private static final double SHOOTER_SPINUP_TIME = 0.25;
+    private static final double POST_SCORE_WAIT = 0.3;
 
     // Store end pose for teleop continuity
     public static Pose autoEndPose = null;
@@ -239,19 +239,19 @@ public class RedClose9Piece extends OpMode {
 
             Pickup1Part1 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(84.085, 83.882), new Pose(95, 83.678)))
+                    .addPath(new BezierLine(new Pose(84.085, 83.882), new Pose(95, 82.678)))
                     .setLinearHeadingInterpolation(Math.toRadians(42.5), Math.toRadians(0))
                     .build();
 
             Pickup1Part2 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(95, 83.678), new Pose(130.189, 83.882)))
+                    .addPath(new BezierLine(new Pose(95, 82.678), new Pose(131.189, 82.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(0))
                     .build();
 
             ScorePickup1 = follower
                     .pathBuilder()
-                    .addPath(new BezierLine(new Pose(130.189, 83.882), new Pose(84.100, 83.882)))
+                    .addPath(new BezierLine(new Pose(131.189, 82.882), new Pose(84.100, 83.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(0), Math.toRadians(42.5))
                     .build();
 

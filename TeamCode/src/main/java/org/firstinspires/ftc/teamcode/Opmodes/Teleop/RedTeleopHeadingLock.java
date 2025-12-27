@@ -11,18 +11,27 @@ import org.firstinspires.ftc.teamcode.subsystems.Shooter;
 import org.firstinspires.ftc.teamcode.subsystems.Kicker;
 import org.firstinspires.ftc.teamcode.subsystems.ScoringAction;
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
-import static org.firstinspires.ftc.teamcode.Opmodes.Autonomous.BlueClose9Piece.autoEndPose;
+import static org.firstinspires.ftc.teamcode.Opmodes.Autonomous.RedClose9Piece.autoEndPose;
 
+// Heading Lock Tuning Constants
+class HeadingLockTuning {
+    public static double Kp = 0.020;              // Start slightly aggressive (Pinpoint is accurate)
+    public static double Ki = 0.0;                // Usually not needed
+    public static double Kd = 0.002;              // Damping for smooth corrections
+    public static double deadzone = 0.1;          // Right stick deadzone
+    public static double maxCorrection = 0.5;     // Safety limit
+    public static double minOdometryConfidence = 5.0;  // Inches from origin
+}
 
 @Configurable
-@TeleOp(name = "Blue TeleOp", group = "TeleOp")
-public class BlueTeleop extends OpMode {
+@TeleOp(name = "Red Teleop Heading Lock", group = "TeleOp")
+public class RedTeleopHeadingLock extends OpMode {
 
     // Pedro Pathing
     private static Follower follower;
     public static Pose startingPose;
 
-    public static Pose parkPose = new Pose(105, 38, Math.toRadians(90));
+    public static Pose parkPose = new Pose(38, 33, Math.toRadians(90));
     public static Pose resetPose = new Pose(72, 72, Math.toRadians(90));
 
     // Subsystems
@@ -34,10 +43,16 @@ public class BlueTeleop extends OpMode {
     // Slow mode
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
-    private double turningMultiplier = 0.6;  // Reduce turning speed to 40%
+    private double turningMultiplier = 0.6;  // Reduce turning speed to 60%
 
     // Auto park state
     private boolean isAutoPark = false;
+
+    // Heading lock state
+    private boolean headingLockEnabled = true;
+    private double targetHeading = 0.0;
+    private double headingIntegral = 0.0;
+    private double lastHeadingError = 0.0;
 
     @Override
     public void init() {
@@ -53,7 +68,6 @@ public class BlueTeleop extends OpMode {
         scoringAction = new ScoringAction(intake, shooter, kicker);
 
         telemetry.addLine("TeleOp Initialized!");
-        telemetry.addData("Starting Heading", Math.toDegrees(follower.getPose().getHeading()));
         telemetry.update();
     }
 
@@ -61,11 +75,8 @@ public class BlueTeleop extends OpMode {
     public void start() {
         follower.startTeleopDrive();
 
-        // FIX: Re-zero field orientation to current robot heading
-        // This makes "wherever robot is facing now" = "forward on field"
-        // Prevents reversed controls when transitioning from auto
-        Pose currentPose = follower.getPose();
-        follower.setPose(new Pose(currentPose.getX(), currentPose.getY(), 0));
+        // Initialize target heading to current heading
+        targetHeading = follower.getPose().getHeading();
     }
 
     @Override
@@ -94,17 +105,64 @@ public class BlueTeleop extends OpMode {
             }
         }
 
-        // ========== DRIVETRAIN CONTROL ==========
-        // Only allow manual drive if NOT in auto park
+        // ========== DRIVETRAIN CONTROL WITH HEADING LOCK ==========
         if (!isAutoPark) {
             double speedMultiplier = slowMode ? slowModeMultiplier : 1.0;
 
-            follower.setTeleOpDrive(
-                    -gamepad1.left_stick_y * speedMultiplier,
-                    -gamepad1.left_stick_x * speedMultiplier,
-                    -gamepad1.right_stick_x * speedMultiplier * turningMultiplier, // Reduced turning speed
-                    false  // false = field-oriented ON
-            );
+            double drive = -gamepad1.left_stick_y * speedMultiplier;
+            double strafe = -gamepad1.left_stick_x * speedMultiplier;
+            double turn = -gamepad1.right_stick_x;
+
+            // Driver manually rotating?
+            boolean manualRotation = Math.abs(turn) > HeadingLockTuning.deadzone;
+
+            if (manualRotation) {
+                // Manual control - update target heading
+                targetHeading = follower.getPose().getHeading();
+                headingIntegral = 0.0;
+                turn *= turningMultiplier;
+            }
+            else if (headingLockEnabled && isOdometryReliable() && !follower.isBusy()) {
+                // Heading lock active - maintain heading
+                double currentHeading = follower.getPose().getHeading();
+                double headingError = angleWrap(targetHeading - currentHeading);
+
+                headingIntegral += headingError;
+                headingIntegral = Math.max(-1.0, Math.min(1.0, headingIntegral));
+
+                double headingDerivative = headingError - lastHeadingError;
+                lastHeadingError = headingError;
+
+                turn = (HeadingLockTuning.Kp * headingError) +
+                        (HeadingLockTuning.Ki * headingIntegral) +
+                        (HeadingLockTuning.Kd * headingDerivative);
+
+                turn = Math.max(-HeadingLockTuning.maxCorrection,
+                        Math.min(HeadingLockTuning.maxCorrection, turn));
+            }
+
+            follower.setTeleOpDrive(drive, strafe, turn, false);
+        }
+
+        // ========== HEADING LOCK CONTROLS ==========
+        // D-pad Up = Toggle heading lock on/off
+        if (gamepad1.dpadUpWasPressed()) {
+            headingLockEnabled = !headingLockEnabled;
+            if (headingLockEnabled) {
+                targetHeading = follower.getPose().getHeading();
+            }
+        }
+
+        // D-pad Right = Snap to Red scoring angle (50°)
+        if (gamepad1.dpadRightWasPressed()) {
+            targetHeading = Math.toRadians(50);
+            headingIntegral = 0.0;
+        }
+
+        // D-pad Down = Face backward (180°)
+        if (gamepad1.dpadDownWasPressed()) {
+            targetHeading = Math.toRadians(180);
+            headingIntegral = 0.0;
         }
 
         // ========== SLOW MODE CONTROL ==========
@@ -136,7 +194,7 @@ public class BlueTeleop extends OpMode {
 
         // ========== SHOOTER PRESET CONTROL ==========
         // Right bumper = Near shot (press once to toggle on/off)
-        if (gamepad1.rightBumperWasPressed()) {
+        if (gamepad1.right_bumper) {
             if (shooter.getCurrentShotMode() == Shooter.ShotMode.NEAR) {
                 shooter.turnOff();
             } else {
@@ -145,7 +203,7 @@ public class BlueTeleop extends OpMode {
         }
 
         // Left bumper = Far shot (press once to toggle on/off)
-        if (gamepad1.leftBumperWasPressed()) {
+        if (gamepad1.left_bumper) {
             if (shooter.getCurrentShotMode() == Shooter.ShotMode.FAR) {
                 shooter.turnOff();
             } else {
@@ -180,6 +238,30 @@ public class BlueTeleop extends OpMode {
             scoringAction.stopScoring();
         }
 
+        // ========== TELEMETRY (Optional - helpful for tuning) ==========
+        telemetry.addData("Heading Lock", headingLockEnabled ? "ON" : "OFF");
+        telemetry.addData("Current Heading", Math.toDegrees(follower.getPose().getHeading()));
+        telemetry.addData("Target Heading", Math.toDegrees(targetHeading));
+        telemetry.update();
+    }
+
+    // ========== HELPER METHODS ==========
+
+    // Wraps angle to [-PI, PI] for shortest rotation
+    private double angleWrap(double angle) {
+        while (angle > Math.PI) angle -= 2 * Math.PI;
+        while (angle < -Math.PI) angle += 2 * Math.PI;
+        return angle;
+    }
+
+    // Check if odometry is reliable (robot moved >5" from origin)
+    private boolean isOdometryReliable() {
+        Pose currentPose = follower.getPose();
+        double distanceFromOrigin = Math.sqrt(
+                currentPose.getX() * currentPose.getX() +
+                        currentPose.getY() * currentPose.getY()
+        );
+        return distanceFromOrigin > HeadingLockTuning.minOdometryConfidence;
     }
 
     @Override

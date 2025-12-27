@@ -11,10 +11,9 @@ public class ScoringAction {
 
     public enum ScoringState {
         IDLE,
-        FEEDING_1,             // Start intake, wait for ball 1 to feed
-        PAUSE_1,               // Pause intake briefly
+        PAUSE_1,               // Brief pause before first kick (ball already loaded)
         KICK_1,                // Kick first ball
-        FEEDING_2,             // Resume intake, wait for ball 2 to feed
+        FEEDING_2,             // Start intake, wait for ball 2 to feed
         PAUSE_2,               // Pause intake briefly
         KICK_2,                // Kick second ball
         FEEDING_3,             // Resume intake, wait for ball 3 to feed
@@ -27,11 +26,12 @@ public class ScoringAction {
     private ScoringState currentState = ScoringState.IDLE;
 
     // BASELINE TIMINGS - Tune these values after testing
-    private static final double FEEDING_DURATION = 1;       // Time for ball to feed
-    private static final double PAUSE_DURATION = 0.3;         // Brief pause before kick (tune this!)
+    private static final double FEEDING_DURATION = 0.5;       // Time for ball to feed (reduced from 1.0)
+    private static final double PAUSE_DURATION = 0.2;         // Brief pause before kick (tune this!)
+    private static final double INITIAL_PAUSE = 0.1;          // Very brief pause before first kick
 
     // Power settings
-    private static final double INTAKE_FEEDING_POWER = 1;   // Intake power during feeding
+    private static final double INTAKE_FEEDING_POWER = 0.85;   // Intake power during feeding
 
     public ScoringAction(Intake intake, Shooter shooter, Kicker kicker) {
         this.intake = intake;
@@ -43,10 +43,11 @@ public class ScoringAction {
     /**
      * Start the 3-ball scoring sequence
      * Make sure flywheel is already spinning before calling this!
+     * Assumes first ball is already loaded and ready to kick
      */
     public void startScoring() {
         if (currentState == ScoringState.IDLE) {
-            currentState = ScoringState.FEEDING_1;
+            currentState = ScoringState.PAUSE_1;
             timer.reset();
         }
     }
@@ -63,21 +64,11 @@ public class ScoringAction {
                 // Do nothing, waiting for startScoring()
                 break;
 
-            case FEEDING_1:
-                // Start intake and wait for first ball to feed
-                intake.setPower(INTAKE_FEEDING_POWER);
-
-                if (timer.seconds() >= FEEDING_DURATION) {
-                    currentState = ScoringState.PAUSE_1;
-                    timer.reset();
-                }
-                break;
-
             case PAUSE_1:
-                // Pause intake briefly to prevent jamming
+                // Very brief pause before kicking first ball (already loaded)
                 intake.stop();
 
-                if (timer.seconds() >= PAUSE_DURATION) {
+                if (timer.seconds() >= INITIAL_PAUSE) {
                     currentState = ScoringState.KICK_1;
                     timer.reset();
                 }
@@ -91,7 +82,7 @@ public class ScoringAction {
                 break;
 
             case FEEDING_2:
-                // Resume intake, wait for ball 2 to feed
+                // Start intake, wait for ball 2 to feed
                 intake.setPower(INTAKE_FEEDING_POWER);
 
                 if (timer.seconds() >= FEEDING_DURATION) {
@@ -193,6 +184,6 @@ public class ScoringAction {
      * Get total estimated sequence time
      */
     public static double getTotalSequenceTime() {
-        return (FEEDING_DURATION * 3) + (PAUSE_DURATION * 3) + (Kicker.PULSE_DURATION_MS / 1000.0 * 3);
+        return INITIAL_PAUSE + (FEEDING_DURATION * 2) + (PAUSE_DURATION * 3) + (Kicker.PULSE_DURATION_MS / 1000.0 * 3);
     }
 }

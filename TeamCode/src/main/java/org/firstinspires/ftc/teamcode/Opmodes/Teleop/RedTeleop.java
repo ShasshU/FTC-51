@@ -34,7 +34,7 @@ public class RedTeleop extends OpMode {
     // Slow mode
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
-    private double turningMultiplier = 0.6;  // Reduce turning speed to 60%
+    private double turningMultiplier = 0.4;  // Reduce turning speed to 60%
 
     // Auto park state
     private boolean isAutoPark = false;
@@ -129,7 +129,7 @@ public class RedTeleop extends OpMode {
 
         // ========== SHOOTER PRESET CONTROL ==========
         // Right bumper = Near shot (press once to toggle on/off)
-        if (gamepad1.right_bumper) {
+        if (gamepad1.rightBumperWasPressed()) {
             if (shooter.getCurrentShotMode() == Shooter.ShotMode.NEAR) {
                 shooter.turnOff();
             } else {
@@ -138,7 +138,7 @@ public class RedTeleop extends OpMode {
         }
 
         // Left bumper = Far shot (press once to toggle on/off)
-        if (gamepad1.left_bumper) {
+        if (gamepad1.leftBumperWasPressed()) {
             if (shooter.getCurrentShotMode() == Shooter.ShotMode.FAR) {
                 shooter.turnOff();
             } else {
