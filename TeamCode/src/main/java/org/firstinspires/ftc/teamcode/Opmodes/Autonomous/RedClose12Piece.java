@@ -250,6 +250,7 @@ public class RedClose12Piece extends OpMode {
                     .addPath(new BezierLine(new Pose(124, 123), new Pose(84.085, 83.882)))
                     .setLinearHeadingInterpolation(Math.toRadians(45), Math.toRadians(42.5))
                     .build();
+
             removeBalls = follower
                     .pathBuilder()
                     .addPath(new BezierLine(new Pose(84.085, 83.882), new Pose(128, 70)))
