@@ -26,12 +26,12 @@ public class ScoringAction {
     private ScoringState currentState = ScoringState.IDLE;
 
     // BASELINE TIMINGS - Tune these values after testing
-    private static final double FEEDING_DURATION = 0.5;       // Time for ball to feed (reduced from 1.0)
+    private static final double FEEDING_DURATION = 0.6;       // Time for ball to feed (reduced from 1.0)
     private static final double PAUSE_DURATION = 0.2;         // Brief pause before kick (tune this!)
     private static final double INITIAL_PAUSE = 0.1;          // Very brief pause before first kick
 
     // Power settings
-    private static final double INTAKE_FEEDING_POWER = 0.85;   // Intake power during feeding
+    private static final double INTAKE_FEEDING_POWER = 1.0;   // Intake power during feeding
 
     public ScoringAction(Intake intake, Shooter shooter, Kicker kicker) {
         this.intake = intake;
