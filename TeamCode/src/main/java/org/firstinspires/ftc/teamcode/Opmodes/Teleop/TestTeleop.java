@@ -10,6 +10,9 @@ import com.pedropathing.paths.Path;
 import com.pedropathing.paths.PathChain;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import org.firstinspires.ftc.teamcode.Subsystems.Intake;
+import org.firstinspires.ftc.teamcode.Subsystems.Shooter;
+import org.firstinspires.ftc.teamcode.Subsystems.Gate;
 
 import org.firstinspires.ftc.teamcode.pedroPathing.Constants;
 
@@ -25,6 +28,7 @@ public class TestTeleop extends OpMode {
     private TelemetryManager telemetryM;
     private boolean slowMode = false;
     private double slowModeMultiplier = 0.5;
+    private Gate gate;
 
     @Override
     public void init() {
@@ -32,6 +36,7 @@ public class TestTeleop extends OpMode {
         follower.setStartingPose(startingPose == null ? new Pose() : startingPose);
         follower.update();
         telemetryM = PanelsTelemetry.INSTANCE.getTelemetry();
+        gate = new Gate(hardwareMap);
 
         pathChain = () -> follower.pathBuilder() //Lazy Curve Generation
                 .addPath(new Path(new BezierLine(follower::getPose, new Pose(45, 98))))
@@ -52,6 +57,7 @@ public class TestTeleop extends OpMode {
         //Call this once per loop
         follower.update();
         telemetryM.update();
+        gate.update();
 
         if (!automatedDrive) {
             //Make the last parameter false for field-centric
@@ -75,10 +81,10 @@ public class TestTeleop extends OpMode {
         }
 
         //Automated PathFollowing
-        if (gamepad1.aWasPressed()) {
-            follower.followPath(pathChain.get());
-            automatedDrive = true;
-        }
+//        if (gamepad1.aWasPressed()) {
+//            follower.followPath(pathChain.get());
+//            automatedDrive = true;
+//        }
 
         //Stop automated following if the follower is done
         if (automatedDrive && (gamepad1.bWasPressed() || !follower.isBusy())) {
@@ -100,6 +106,13 @@ public class TestTeleop extends OpMode {
         if (gamepad2.yWasPressed()) {
             slowModeMultiplier -= 0.25;
         }
+        if (gamepad1.bWasPressed()) {
+            gate.close();
+        }
+        if (gamepad1.aWasPressed()) {
+            gate.open();
+        }
+
 
         telemetryM.debug("position", follower.getPose());
         telemetryM.debug("velocity", follower.getVelocity());
