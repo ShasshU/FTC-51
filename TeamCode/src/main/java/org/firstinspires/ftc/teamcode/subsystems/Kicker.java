@@ -19,7 +19,7 @@ public class Kicker {
     // Pulse timing
     private boolean pulseActive = false;
     private long pulseStartTime = 0;
-    public static final long PULSE_DURATION_MS = 200; // How long to hold extended (tune this!)
+    public static final long PULSE_DURATION_MS = 175; // How long to hold extended (tune this!)
 
     public Kicker(HardwareMap hardwareMap) {
         kicker = hardwareMap.get(Servo.class, "kicker");
