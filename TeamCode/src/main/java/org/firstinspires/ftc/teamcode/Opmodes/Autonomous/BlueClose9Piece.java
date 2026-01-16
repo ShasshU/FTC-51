@@ -239,21 +239,21 @@ public class BlueClose9Piece extends OpMode {
         public static final Pose startPose = new Pose(20.000, 123.000, Math.toRadians(137.5));
 
         // Scoring poses
-        public static final Pose scorePreloadPose = new Pose(58.276, 84.936, Math.toRadians(137.5));
-        public static final Pose scorePickup1Pose = new Pose(58.144, 85.170, Math.toRadians(139.5));
-        public static final Pose scorePickup2Pose = new Pose(58.042, 85.170, Math.toRadians(137.5));
+        public static final Pose scorePreloadPose = new Pose(58.276, 84.936, Math.toRadians(139.5));
+        public static final Pose scorePickup1Pose = new Pose(58.144, 85.170, Math.toRadians(143.5));
+        public static final Pose scorePickup2Pose = new Pose(58.042, 85.170, Math.toRadians(140.5));
 
         // Pickup 1 poses
-        public static final Pose pickup1IntermediatePose = new Pose(49.000, 83.702, Math.toRadians(180));
-        public static final Pose pickup1Pose = new Pose(12.694, 83.702, Math.toRadians(180));
+        public static final Pose pickup1IntermediatePose = new Pose(49.000, 82.5, Math.toRadians(180));
+        public static final Pose pickup1Pose = new Pose(12.694, 82.5, Math.toRadians(180));
 
         // Gate poses
         public static final Pose gateSetupPose = new Pose(29.766, 69.371, Math.toRadians(0));
         public static final Pose gateEmptyPose = new Pose(13.883, 69.371, Math.toRadians(0));
 
         // Pickup 2 poses
-        public static final Pose pickup2IntermediatePose = new Pose(58.276, 59.490, Math.toRadians(180));
-        public static final Pose pickup2Pose = new Pose(9.500, 59.490, Math.toRadians(180));
+        public static final Pose pickup2IntermediatePose = new Pose(58.276, 59, Math.toRadians(180));
+        public static final Pose pickup2Pose = new Pose(9.500, 59, Math.toRadians(180));
 
         // Leave pose
         public static final Pose leavePose = new Pose(44.615, 66.710, Math.toRadians(137.5));
